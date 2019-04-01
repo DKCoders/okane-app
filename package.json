@@ -5,7 +5,9 @@
   "dependencies": {
     "@material-ui/core": "^3.7.1",
     "@material-ui/icons": "^3.0.1",
+    "@rematch/core": "^1.1.0",
     "eslint-config-airbnb": "^17.1.0",
+    "immutability-helper": "^3.0.0",
     "moment": "^2.23.0",
     "prop-types": "^15.6.2",
     "proppy": "^1.2.6",
@@ -14,6 +16,7 @@
     "react": "^16.8.6",
     "react-color": "^2.17.0",
     "react-dom": "^16.8.6",
+    "react-redux": "^6.0.1",
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8"
   },

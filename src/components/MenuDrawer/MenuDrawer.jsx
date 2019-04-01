@@ -13,6 +13,9 @@ import ExpensesIcon from '@material-ui/icons/List';
 import BudgetsIcon from '@material-ui/icons/BubbleChart';
 import DebtsIcon from '@material-ui/icons/Dehaze';
 import CategoriesIcon from '@material-ui/icons/Category';
+import { connect } from 'react-redux';
+import { withHandlers } from 'proppy';
+import { attach } from 'proppy-react';
 import MenuDrawerItem from './components/MenuDrawerItem';
 
 const styles = theme => ({
@@ -27,14 +30,15 @@ const styles = theme => ({
   },
 });
 
-const MenuDrawer = ({ classes }) => (
-  <Drawer open onClose={() => {}}>
-    <div
-      tabIndex={0}
-      role="button"
-      onClick={() => {}}
-      onKeyDown={() => {}}
-    >
+const P = withHandlers({
+  onCloseDrawer: (props, { dispatch }) => () => {
+    dispatch.app.setMenuOpen(false);
+  },
+});
+
+const MenuDrawer = ({ classes, isOpen, onCloseDrawer }) => (
+  <Drawer open={isOpen} onClose={onCloseDrawer}>
+    <div role="presentation" onClick={onCloseDrawer}>
       <div className={classes.list}>
         <div className={classes.toolbar}>
           <Typography variant="h6">Menu</Typography>
@@ -76,8 +80,14 @@ const MenuDrawer = ({ classes }) => (
 
 MenuDrawer.propTypes = {
   classes: PropTypes.shape().isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onCloseDrawer: PropTypes.func.isRequired,
 };
 
 MenuDrawer.defaultProps = {};
 
-export default withStyles(styles)(MenuDrawer);
+const mapStateProps = state => ({
+  isOpen: state.app.menuOpen,
+});
+
+export default withStyles(styles)(connect(mapStateProps)(attach(P)(MenuDrawer)));
