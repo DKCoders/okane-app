@@ -1,14 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import generateRoutes from '../../hoc/generateRoutes';
+import list from './components/CategoriesList';
+import view from './components/CategoryView';
+import form from './components/CategoryForm';
 
-const Categories = () => (
-  <>
-    Categories
-  </>
-);
-
-Categories.propTypes = {};
-
-Categories.defaultProps = {};
-
-export default Categories;
+export default generateRoutes({ list, view, form });

@@ -1,14 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import generateRoutes from '../../hoc/generateRoutes';
+import list from './components/DebtsList';
+import view from './components/DebtView';
+import form from './components/DebtForm';
 
-const Debts = () => (
-  <>
-    Debts
-  </>
-);
-
-Debts.propTypes = {};
-
-Debts.defaultProps = {};
-
-export default Debts;
+export default generateRoutes({ list, view, form });

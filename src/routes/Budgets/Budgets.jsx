@@ -1,14 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import generateRoutes from '../../hoc/generateRoutes';
+import list from './components/BudgetsList';
+import view from './components/BudgetView';
+import form from './components/BudgetForm';
 
-const Budgets = () => (
-  <>
-    Budgets
-  </>
-);
-
-Budgets.propTypes = {};
-
-Budgets.defaultProps = {};
-
-export default Budgets;
+export default generateRoutes({ list, view, form });
