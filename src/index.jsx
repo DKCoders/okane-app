@@ -6,6 +6,9 @@ import { Provider } from 'react-redux';
 import { ProppyProvider } from 'proppy-react';
 import App from './components/App';
 import models from './modules';
+import TranslationService from './services/translation/service';
+
+TranslationService.setLanguage('es');
 
 const store = init({ models });
 const { dispatch, getState } = store;
