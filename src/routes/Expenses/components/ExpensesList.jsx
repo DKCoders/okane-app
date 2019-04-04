@@ -1,22 +1,25 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import Navbar from '../../../components/Navbar';
 import MenuButton from '../../../components/MenuButton';
 import FilterSortSearchButtons from '../../../components/FilterSortSearchButtons';
+import { withTranslation } from '../../../services/translation';
 
-const ExpensesList = () => (
+const ExpensesList = ({ t }) => (
   <>
     <Navbar
       left={<MenuButton />}
-      title="Expenses"
+      title={t('Expenses')}
       right={(<FilterSortSearchButtons />)}
     />
     Expenses List
   </>
 );
 
-ExpensesList.propTypes = {};
+ExpensesList.propTypes = {
+  t: PropTypes.func.isRequired,
+};
 
 ExpensesList.defaultProps = {};
 
-export default ExpensesList;
+export default withTranslation()(ExpensesList);

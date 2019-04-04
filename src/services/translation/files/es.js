@@ -28,4 +28,5 @@ export default {
   'Material Class': 'Clase de Materiales',
   'Edit Class': 'Editar Clase',
   'New Class': 'Nuevo Clase',
+  Expenses: 'Gastos',
 };
