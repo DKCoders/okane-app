@@ -7,6 +7,10 @@ import FilterSortSearchButtons from '../../../components/FilterSortSearchButtons
 import { withTranslation } from '../../../services/translation';
 import MonthPicker from '../../../components/MonthPicker';
 
+const monthPickerProps = {
+  size: 'large',
+};
+
 const ExpensesList = ({ t }) => {
   const [{ month, year }, setMonthYear] = useState({
     month: moment().month(), year: moment().year(),
@@ -19,8 +23,12 @@ const ExpensesList = ({ t }) => {
         title={t('Expenses')}
         right={(<FilterSortSearchButtons />)}
       />
-      <MonthPicker open month={month} year={year} onChange={onMonthYearChange} />
-    Expenses List
+      <MonthPicker
+        month={month}
+        year={year}
+        onChange={onMonthYearChange}
+        buttonProps={monthPickerProps}
+      />
     </>
   );
 };

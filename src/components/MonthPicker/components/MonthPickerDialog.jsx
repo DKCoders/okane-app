@@ -1,33 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import months from './months';
-import { withTranslation } from '../../services/translation';
-
-const styles = {
-  yearContainer: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-};
+import LeftRightButtons from './LeftRightButtons';
+import months from '../months';
+import { withTranslation } from '../../../services/translation';
 
 class MonthPickerDialog extends Component {
   constructor(props) {
     super(props);
     const { initialYear, initialMonth } = props;
     this.state = {
-      selectedYear: initialYear || moment().year(),
-      selectedMonth: initialMonth || moment().month(),
+      selectedYear: initialYear !== null ? initialYear : moment().year(),
+      selectedMonth: initialMonth !== null ? initialMonth : moment().month(),
     };
 
     this.setInitialValues = this.setInitialValues.bind(this);
@@ -58,8 +47,8 @@ class MonthPickerDialog extends Component {
   setInitialValues() {
     const { initialYear, initialMonth } = this.props;
     this.setState({
-      selectedYear: initialYear || moment().year(),
-      selectedMonth: initialMonth || moment().month(),
+      selectedYear: initialYear !== null ? initialYear : moment().year(),
+      selectedMonth: initialMonth !== null ? initialMonth : moment().month(),
     });
   }
 
@@ -81,41 +70,23 @@ class MonthPickerDialog extends Component {
   }
 
   render() {
-    const { open, classes, t } = this.props;
+    const { open, t } = this.props;
     const { selectedYear, selectedMonth } = this.state;
     return (
       <Dialog open={open} maxWidth="md" fullWidth onClose={this.onClose}>
         <DialogContent>
-          <Grid container justify="space-between">
-            <Grid item wrap="nowrap">
-              <IconButton onClick={() => this.modifyYear(-1)}>
-                <ChevronLeftIcon />
-              </IconButton>
-            </Grid>
-            <Grid item wrap="nowrap" className={classes.yearContainer}>
-              <Typography variant="h5">{selectedYear}</Typography>
-            </Grid>
-            <Grid item wrap="nowrap">
-              <IconButton onClick={() => this.modifyYear(1)}>
-                <ChevronRightIcon />
-              </IconButton>
-            </Grid>
-          </Grid>
-          <Grid container justify="space-between">
-            <Grid item wrap="nowrap">
-              <IconButton onClick={() => this.modifyMonth(-1)}>
-                <ChevronLeftIcon />
-              </IconButton>
-            </Grid>
-            <Grid item wrap="nowrap" className={classes.yearContainer}>
-              <Typography variant="h4">{t(months[selectedMonth])}</Typography>
-            </Grid>
-            <Grid item wrap="nowrap">
-              <IconButton onClick={() => this.modifyMonth(1)}>
-                <ChevronRightIcon />
-              </IconButton>
-            </Grid>
-          </Grid>
+          <LeftRightButtons
+            onLeftClick={() => this.modifyYear(-1)}
+            onRightClick={() => this.modifyYear(1)}
+          >
+            <Typography variant="h5">{selectedYear}</Typography>
+          </LeftRightButtons>
+          <LeftRightButtons
+            onLeftClick={() => this.modifyMonth(-1)}
+            onRightClick={() => this.modifyMonth(1)}
+          >
+            <Typography variant="h4">{t(months[selectedMonth])}</Typography>
+          </LeftRightButtons>
         </DialogContent>
         <DialogActions>
           <Button onClick={this.onClose}>
@@ -132,7 +103,6 @@ class MonthPickerDialog extends Component {
 
 MonthPickerDialog.propTypes = {
   open: PropTypes.bool,
-  classes: PropTypes.shape().isRequired,
   t: PropTypes.func.isRequired,
   onClose: PropTypes.func,
   onSave: PropTypes.func,
@@ -148,4 +118,4 @@ MonthPickerDialog.defaultProps = {
   onSave: null,
 };
 
-export default withTranslation()(withStyles(styles)(MonthPickerDialog));
+export default withTranslation()(MonthPickerDialog);
