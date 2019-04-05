@@ -41,4 +41,8 @@ export default {
   October: 'Octubre',
   November: 'Noviembre',
   December: 'Diciembre',
+  Incomes: 'Ingresos',
+  Sort: 'Ordenar',
+  Category: 'Categoria',
+  Date: 'Fecha',
 };
