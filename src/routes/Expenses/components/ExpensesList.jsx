@@ -29,7 +29,7 @@ const dayTitle = date => (
 );
 
 const categoryTitle = category => (
-  <Grid container wrap="nowrap" alignItems="center" justify="center" spacing="16">
+  <Grid container wrap="nowrap" alignItems="center" justify="center" spacing={16}>
     <Grid item>
       {avatarRenderColor({ category })}
     </Grid>
@@ -38,6 +38,12 @@ const categoryTitle = category => (
     </Grid>
   </Grid>
 );
+
+
+const sortOptions = [
+  { text: 'Category' },
+  { text: 'Date' },
+];
 
 // TODO: remove Mocked data
 const expenses = [{
@@ -56,6 +62,11 @@ const ExpensesList = ({ t }) => {
   const [tab, setTab] = useState(0);
   // Sort state
   const [sortOpen, setSortOpen] = useState(false);
+  const [{ sortIndex, sortDir }, setSort] = useState({ sortIndex: null, sortDir: null });
+  const onSortChange = (index, dir) => {
+    setSort({ sortIndex: index, sortDir: dir });
+    setSortOpen(false);
+  };
   return (
     <>
       <Navbar
@@ -67,7 +78,15 @@ const ExpensesList = ({ t }) => {
           />
         )}
       />
-      <SortDialog open={sortOpen} onClose={() => setSortOpen(false)} />
+      <SortDialog
+        open={sortOpen}
+        onClose={() => setSortOpen(false)}
+        options={sortOptions}
+        translateText
+        index={sortIndex}
+        dir={sortDir}
+        onSave={onSortChange}
+      />
       <MonthPicker
         month={month}
         year={year}
