@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
+import { withStyles } from '@material-ui/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import AppBar from '../StyledAppBar';
 
 const styles = {
   grow: {
@@ -18,7 +18,9 @@ const styles = {
   },
 };
 
-const Navbar = ({ classes, left, title, right }) => (
+const Navbar = ({
+  classes, left, title, right,
+}) => (
   <AppBar position="static">
     <Toolbar>
       <div className={classes.menuButton} id="navbar-left-side">
@@ -37,8 +39,15 @@ const Navbar = ({ classes, left, title, right }) => (
 
 Navbar.propTypes = {
   classes: PropTypes.shape().isRequired,
+  left: PropTypes.node,
+  title: PropTypes.node,
+  right: PropTypes.node,
 };
 
-Navbar.defaultProps = {};
+Navbar.defaultProps = {
+  left: null,
+  title: null,
+  right: null,
+};
 
 export default withStyles(styles)(Navbar);
