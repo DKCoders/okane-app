@@ -15,6 +15,7 @@ import { withTranslation } from '../../../services/translation';
 import MonthPicker from '../../../components/MonthPicker';
 import AppBar from '../../../components/StyledAppBar';
 import ListBlock from '../../../components/ListBlock';
+import SortDialog from '../../../components/SortDialog';
 
 const monthPickerProps = {
   size: 'large',
@@ -39,7 +40,7 @@ const categoryTitle = category => (
 );
 
 // TODO: remove Mocked data
-const items = [{
+const expenses = [{
   id: 1, category: { name: 'categoria', color: 'red' }, date: moment(), description: 'description', value: 10000,
 }, {
   id: 2, category: { name: 'categoria', color: 'red' }, date: moment().subtract(1, 'day'), description: 'description', value: 10000,
@@ -53,13 +54,20 @@ const ExpensesList = ({ t }) => {
   const onMonthYearChange = (newMonth, newYear) => setMonthYear({ month: newMonth, year: newYear });
   // Tab state
   const [tab, setTab] = useState(0);
+  // Sort state
+  const [sortOpen, setSortOpen] = useState(false);
   return (
     <>
       <Navbar
         left={<MenuButton />}
         title={t('Expenses')}
-        right={(<FilterSortSearchButtons />)}
+        right={(
+          <FilterSortSearchButtons
+            onSortClick={() => setSortOpen(true)}
+          />
+        )}
       />
+      <SortDialog open={sortOpen} onClose={() => setSortOpen(false)} />
       <MonthPicker
         month={month}
         year={year}
@@ -77,7 +85,7 @@ const ExpensesList = ({ t }) => {
         renderAvatar={avatarRenderColor}
         renderText={item => item.description}
         renderAction={item => item.value}
-        items={items}
+        items={expenses}
         keyProp="id"
       />
       <ListBlock
@@ -85,7 +93,7 @@ const ExpensesList = ({ t }) => {
         renderAvatar={avatarRenderText}
         renderText={item => item.description}
         renderAction={item => item.value}
-        items={items}
+        items={expenses}
         keyProp="id"
       />
     </>
