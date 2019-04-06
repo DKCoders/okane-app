@@ -66,7 +66,7 @@ const filterSections = [{
   renderAvatar: avatarRenderCategoryColor,
 }];
 
-const ExpensesList = ({ t }) => {
+const ExpensesList = ({ t, match, history }) => {
   // MonthPicker state
   const [{ month, year }, setMonthYear] = useState({
     month: moment().month(), year: moment().year(),
@@ -83,6 +83,10 @@ const ExpensesList = ({ t }) => {
   // Filter state
   const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState({});
+  // Handlers
+  const onItemClick = (item) => {
+    history.push(`${match.url}/${item.id}`);
+  };
   return (
     <>
       <Navbar
@@ -132,6 +136,7 @@ const ExpensesList = ({ t }) => {
         renderAction={item => item.value}
         items={expenses}
         keyProp="id"
+        onItemClick={onItemClick}
       />
       <ListBlock
         title={categoryTitle({ name: 'category', color: 'red' })}
@@ -140,12 +145,15 @@ const ExpensesList = ({ t }) => {
         renderAction={item => item.value}
         items={expenses}
         keyProp="id"
+        onItemClick={onItemClick}
       />
     </>
   );
 };
 ExpensesList.propTypes = {
   t: PropTypes.func.isRequired,
+  match: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
 };
 
 ExpensesList.defaultProps = {};

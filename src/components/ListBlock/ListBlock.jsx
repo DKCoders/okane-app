@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 });
 
 const ListBlock = ({
-  title, renderAvatar, renderText, renderAction, items, keyProp,
+  title, renderAvatar, renderText, renderAction, items, keyProp, onItemClick,
 }) => {
   const classes = useStyles();
   return (
@@ -23,7 +23,7 @@ const ListBlock = ({
       <List>
         <ListSubheader>{title}</ListSubheader>
         {items.map((item, index) => (
-          <ListItem button key={item[keyProp]}>
+          <ListItem button key={item[keyProp]} onClick={event => onItemClick(item, index, event)}>
             {renderAvatar && (
               <ListItemAvatar>
                 {renderAvatar(item, index)}
@@ -47,14 +47,17 @@ ListBlock.propTypes = {
   renderAvatar: PropTypes.func,
   renderAction: PropTypes.func,
   renderText: PropTypes.func.isRequired,
+  onItemClick: PropTypes.func,
   items: PropTypes.arrayOf(PropTypes.shape()),
   keyProp: PropTypes.string,
 };
 
+const dummyFunc = () => {};
 ListBlock.defaultProps = {
   title: null,
   renderAvatar: null,
   renderAction: null,
+  onItemClick: dummyFunc,
   items: [],
   keyProp: 'id',
 };
