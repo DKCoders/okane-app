@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import MonthPickerDialog from './components/MonthPickerDialog';
 import LeftRightButtons from './components/LeftRightButtons';
 import months from './months';
-import { withTranslation } from '../../services/translation';
+import { useTranslation } from '../../services/translation';
 
 const modifyDate = (oldMont, oldYear, value) => {
   let month = oldMont + value;
@@ -20,8 +20,9 @@ const modifyDate = (oldMont, oldYear, value) => {
 };
 
 const MonthPicker = ({
-  month, year, onChange, t, buttonProps,
+  month, year, onChange, buttonProps,
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const onSave = useCallback((...params) => {
     if (onChange) onChange(...params);
@@ -55,7 +56,6 @@ const MonthPicker = ({
 MonthPicker.propTypes = {
   month: PropTypes.number.isRequired,
   year: PropTypes.number.isRequired,
-  t: PropTypes.func.isRequired,
   onChange: PropTypes.func,
   buttonProps: PropTypes.shape(),
 };
@@ -66,4 +66,4 @@ MonthPicker.defaultProps = {
   buttonProps: dummyShape,
 };
 
-export default withTranslation()(MonthPicker);
+export default MonthPicker;

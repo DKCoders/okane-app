@@ -16,12 +16,14 @@ import MonthPicker from '../../../components/MonthPicker';
 import AppBar from '../../../components/StyledAppBar';
 import ListBlock from '../../../components/ListBlock';
 import SortDialog from '../../../components/SortDialog';
+import FilterDialog from '../../../components/FilterDialog';
 
 const monthPickerProps = {
   size: 'large',
 };
 
-const avatarRenderColor = item => <Avatar style={{ backgroundColor: item.category ? item.category.color : 'lightgray' }} />;
+const avatarRenderCategoryColor = category => <Avatar style={{ backgroundColor: category ? category.color : 'lightgray' }} />;
+const avatarRenderColor = item => avatarRenderCategoryColor(item.category);
 const avatarRenderText = item => <Avatar>{moment(item.date).format('DD')}</Avatar>;
 
 const dayTitle = date => (
@@ -45,6 +47,30 @@ const sortOptions = [
   { text: 'Date' },
 ];
 
+const filterSections = [{
+  property: 'categories',
+  title: 'Categories',
+  type: 'multi',
+  options: [
+    { id: 'cat1', name: 'categoria 1', color: 'red' },
+    { id: 'cat2', name: 'categoria 2', color: 'blue' },
+  ],
+  keyProp: 'id',
+  renderText: category => category.name,
+  renderAvatar: avatarRenderCategoryColor,
+}, {
+  property: 'category',
+  title: 'Categories Single',
+  type: 'single',
+  options: [
+    { id: 'cat1', name: 'categoria 1', color: 'red' },
+    { id: 'cat2', name: 'categoria 2', color: 'blue' },
+  ],
+  keyProp: 'id',
+  renderText: category => category.name,
+  renderAvatar: avatarRenderCategoryColor,
+}];
+
 // TODO: remove Mocked data
 const expenses = [{
   id: 1, category: { name: 'categoria', color: 'red' }, date: moment(), description: 'description', value: 10000,
@@ -63,10 +89,12 @@ const ExpensesList = ({ t }) => {
   // Sort state
   const [sortOpen, setSortOpen] = useState(false);
   const [{ sortIndex, sortDir }, setSort] = useState({ sortIndex: null, sortDir: null });
-  const onSortChange = (index, dir) => {
+  const onSortChange = ({ sortIndex: index, sortDir: dir }) => {
     setSort({ sortIndex: index, sortDir: dir });
     setSortOpen(false);
   };
+  // Filter state
+  const [filterOpen, setFilterOpen] = useState(false);
   return (
     <>
       <Navbar
@@ -74,7 +102,9 @@ const ExpensesList = ({ t }) => {
         title={t('Expenses')}
         right={(
           <FilterSortSearchButtons
+            sortActive={sortIndex !== null}
             onSortClick={() => setSortOpen(true)}
+            onFilterClick={() => setFilterOpen(true)}
           />
         )}
       />
@@ -86,6 +116,11 @@ const ExpensesList = ({ t }) => {
         index={sortIndex}
         dir={sortDir}
         onSave={onSortChange}
+      />
+      <FilterDialog
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        sections={filterSections}
       />
       <MonthPicker
         month={month}

@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/styles';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
-import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
-import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -17,22 +14,10 @@ import ClearAllIcon from '@material-ui/icons/ClearAll';
 import TextRotationDownIcon from '@material-ui/icons/TextRotationDown';
 import TextRotateUpIcon from '@material-ui/icons/TextRotateUp';
 import AppBar from '../StyledAppBar';
+import Toolbar from '../Toolbar';
 import { withTranslation } from '../../services/translation';
 
 const Transition = props => <Slide direction="up" {...props} />;
-
-const styles = {
-  grow: {
-    flexGrow: 1,
-  },
-  leftButtons: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  buttons: {
-    display: 'flex',
-  },
-};
 
 const getSortIcon = dir => (dir === 'asc' ? (
   <TextRotateUpIcon />
@@ -88,8 +73,10 @@ class SortDialog extends Component {
 
   onClose(event) {
     const { onClose } = this.props;
-    onClose(event);
-    this.setInitialValues(null, null, null);
+    if (onClose) {
+      onClose(event);
+      this.setInitialValues(null, null, null);
+    }
   }
 
   onClear() {
@@ -99,8 +86,12 @@ class SortDialog extends Component {
   onSave(event) {
     const { onSave } = this.props;
     const { sortOption, sortIndex, sortDir } = this.state;
-    onSave(sortIndex, sortDir, sortOption, event);
-    this.setInitialValues(null, null, null);
+    if (onSave) {
+      onSave({
+        sortIndex, sortDir, sortOption, event,
+      });
+      this.setInitialValues(null, null, null);
+    }
   }
 
   setInitialValues(sortOption, sortIndex, sortDir) {
@@ -113,31 +104,30 @@ class SortDialog extends Component {
 
   render() {
     const {
-      open, t, options, translateText, classes,
+      open, t, options, translateText,
     } = this.props;
     const { sortIndex, sortDir } = this.state;
     return (
       <Dialog fullScreen open={open} onClose={this.onClose} TransitionComponent={Transition}>
         <AppBar position="relative">
-          <Toolbar>
-            <div className={classes.leftButtons}>
+          <Toolbar
+            left={(
               <IconButton color="inherit" onClick={this.onClose} aria-label="Close">
                 <CloseIcon />
               </IconButton>
-            </div>
-            <Typography variant="h6" color="inherit">
-              {t('Sort')}
-            </Typography>
-            <div className={classes.grow} />
-            <div className={classes.buttons}>
-              <IconButton color="inherit" onClick={this.onClear}>
-                <ClearAllIcon />
-              </IconButton>
-              <IconButton color="inherit" onClick={this.onSave}>
-                <SaveIcon />
-              </IconButton>
-            </div>
-          </Toolbar>
+            )}
+            title={t('Sort')}
+            right={(
+              <>
+                <IconButton color="inherit" onClick={this.onClear}>
+                  <ClearAllIcon />
+                </IconButton>
+                <IconButton color="inherit" onClick={this.onSave}>
+                  <SaveIcon />
+                </IconButton>
+              </>
+            )}
+          />
         </AppBar>
         <List>
           {options.map((option, index) => (
@@ -163,7 +153,6 @@ SortDialog.propTypes = {
   onClose: PropTypes.func,
   onSave: PropTypes.func,
   t: PropTypes.func.isRequired,
-  classes: PropTypes.shape().isRequired,
   options: PropTypes.arrayOf(PropTypes.shape({
     text: PropTypes.string,
   })),
@@ -172,15 +161,14 @@ SortDialog.propTypes = {
   dir: PropTypes.string,
 };
 
-const dummyFunc = () => {};
 SortDialog.defaultProps = {
   open: false,
-  onClose: dummyFunc,
-  onSave: dummyFunc,
+  onClose: null,
+  onSave: null,
   options: [],
   translateText: false,
   index: null,
   dir: 'asc',
 };
 
-export default withTranslation()(withStyles(styles)(SortDialog));
+export default withTranslation()(SortDialog);
