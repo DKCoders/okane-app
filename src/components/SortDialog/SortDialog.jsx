@@ -90,6 +90,7 @@ class SortDialog extends Component {
       onSave({
         sortIndex, sortDir, sortOption, event,
       });
+      this.onClose(event);
       this.setInitialValues(null, null, null);
     }
   }

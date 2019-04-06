@@ -17,13 +17,23 @@ import AppBar from '../../../components/StyledAppBar';
 import ListBlock from '../../../components/ListBlock';
 import SortDialog from '../../../components/SortDialog';
 import FilterDialog from '../../../components/FilterDialog';
+import { categories, expenses } from '../../../mock';
 
 const monthPickerProps = {
   size: 'large',
 };
 
+const isFiltersActive = filters => Object.values(filters).some((value) => {
+  if (Array.isArray(value)) {
+    return !!value.length;
+  }
+  return value !== null;
+});
+
 const avatarRenderCategoryColor = category => <Avatar style={{ backgroundColor: category ? category.color : 'lightgray' }} />;
-const avatarRenderColor = item => avatarRenderCategoryColor(item.category);
+const avatarRenderColor = item => avatarRenderCategoryColor(
+  categories.find(category => category.id === item.categoryId),
+);
 const avatarRenderText = item => <Avatar>{moment(item.date).format('DD')}</Avatar>;
 
 const dayTitle = date => (
@@ -41,7 +51,6 @@ const categoryTitle = category => (
   </Grid>
 );
 
-
 const sortOptions = [
   { text: 'Category' },
   { text: 'Date' },
@@ -51,31 +60,10 @@ const filterSections = [{
   property: 'categories',
   title: 'Categories',
   type: 'multi',
-  options: [
-    { id: 'cat1', name: 'categoria 1', color: 'red' },
-    { id: 'cat2', name: 'categoria 2', color: 'blue' },
-  ],
-  keyProp: 'id',
+  options: categories,
+  valueProp: 'id',
   renderText: category => category.name,
   renderAvatar: avatarRenderCategoryColor,
-}, {
-  property: 'category',
-  title: 'Categories Single',
-  type: 'single',
-  options: [
-    { id: 'cat1', name: 'categoria 1', color: 'red' },
-    { id: 'cat2', name: 'categoria 2', color: 'blue' },
-  ],
-  keyProp: 'id',
-  renderText: category => category.name,
-  renderAvatar: avatarRenderCategoryColor,
-}];
-
-// TODO: remove Mocked data
-const expenses = [{
-  id: 1, category: { name: 'categoria', color: 'red' }, date: moment(), description: 'description', value: 10000,
-}, {
-  id: 2, category: { name: 'categoria', color: 'red' }, date: moment().subtract(1, 'day'), description: 'description', value: 10000,
 }];
 
 const ExpensesList = ({ t }) => {
@@ -91,10 +79,10 @@ const ExpensesList = ({ t }) => {
   const [{ sortIndex, sortDir }, setSort] = useState({ sortIndex: null, sortDir: null });
   const onSortChange = ({ sortIndex: index, sortDir: dir }) => {
     setSort({ sortIndex: index, sortDir: dir });
-    setSortOpen(false);
   };
   // Filter state
   const [filterOpen, setFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({});
   return (
     <>
       <Navbar
@@ -103,6 +91,7 @@ const ExpensesList = ({ t }) => {
         right={(
           <FilterSortSearchButtons
             sortActive={sortIndex !== null}
+            filterActive={isFiltersActive(filters)}
             onSortClick={() => setSortOpen(true)}
             onFilterClick={() => setFilterOpen(true)}
           />
@@ -121,6 +110,8 @@ const ExpensesList = ({ t }) => {
         open={filterOpen}
         onClose={() => setFilterOpen(false)}
         sections={filterSections}
+        onSave={setFilters}
+        initialValue={filters}
       />
       <MonthPicker
         month={month}

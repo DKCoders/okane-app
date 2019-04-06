@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
@@ -14,11 +14,20 @@ import { useTranslation } from '../../services/translation';
 
 const Transition = props => <Slide direction="up" {...props} />;
 
+const getDefaultFilters = sections => sections
+  .reduce((acum, section) => ({ ...acum, [section.property]: section.type === 'multi' ? [] : null }), {});
+
 const FilterDialog = ({
-  open, onClose, onSave, sections,
+  open, onClose, onSave, sections, initialValue,
 }) => {
   const { t } = useTranslation();
-  const [filter, setFilter] = useState(null);
+  // Filter state
+  const [filters, setFilters] = useState({});
+  useEffect(() => {
+    const defaultFilters = getDefaultFilters(sections);
+    const useInitialValue = initialValue && Object.keys(initialValue).length === sections.length;
+    setFilters(useInitialValue ? initialValue : defaultFilters);
+  }, [open]);
   // Section state
   const [selectedSection, setSelectedSection] = useState(null);
 
@@ -29,23 +38,48 @@ const FilterDialog = ({
     }
   };
   const onClearHandle = () => {
-    console.log('Clear all');
+    const defaultFilters = getDefaultFilters(sections);
+    setFilters(defaultFilters);
   };
   const onSaveHandle = (event) => {
     if (onSave) {
-      onSave(event);
+      onSave(filters);
+      onCloseHandle(event);
       setSelectedSection(null);
+      setFilters({});
     }
   };
 
   // Content render logic
   let content = null;
-  if (sections.length === 0) {
-    content = (<Section section={sections[0]} />);
-  } else if (selectedSection !== null) {
-    content = (<Section section={sections[selectedSection]} />);
-  } else {
-    content = (<SectionPicker sections={sections} onSectionClick={setSelectedSection} />);
+  if (open) {
+    if (sections.length === 1) {
+      content = (
+        <Section
+          section={sections[0]}
+          value={filters[sections[0].property]}
+          onChange={value => setFilters({ ...filters, [sections[0].property]: value })}
+        />
+      );
+    } else if (selectedSection !== null) {
+      const section = sections[selectedSection];
+      content = (
+        <Section
+          section={section}
+          onBack={() => setSelectedSection(null)}
+          value={filters[section.property]}
+          onChange={value => setFilters({ ...filters, [section.property]: value })}
+        />
+      );
+    } else {
+      content = (
+        <SectionPicker
+          sections={sections}
+          onSectionClick={index => setSelectedSection(index)}
+          filters={filters}
+        />
+      );
+    }
   }
 
   return (
@@ -80,6 +114,7 @@ FilterDialog.propTypes = {
   onClose: PropTypes.func,
   onSave: PropTypes.func,
   sections: PropTypes.arrayOf(PropTypes.shape()),
+  initialValue: PropTypes.shape(),
 };
 
 FilterDialog.defaultProps = {
@@ -87,6 +122,7 @@ FilterDialog.defaultProps = {
   onClose: null,
   onSave: null,
   sections: [],
+  initialValue: null,
 };
 
 export default FilterDialog;

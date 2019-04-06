@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Badge from '@material-ui/core/Badge';
 import IconButton from '@material-ui/core/IconButton';
 import FilterIcon from '@material-ui/icons/FilterList';
 import SortIcon from '@material-ui/icons/Sort';
@@ -11,17 +12,21 @@ const FilterSortSearchButtons = ({
   <>
     <IconButton
       aria-haspopup="true"
-      color={!filterActive ? 'inherit' : 'secondary'}
+      color="inherit"
       onClick={onFilterClick}
     >
-      <FilterIcon />
+      <Badge variant="dot" color="secondary" invisible={!filterActive}>
+        <FilterIcon />
+      </Badge>
     </IconButton>
     <IconButton
       aria-haspopup="true"
-      color={!sortActive ? 'inherit' : 'secondary'}
+      color="inherit"
       onClick={onSortClick}
     >
-      <SortIcon />
+      <Badge variant="dot" color="secondary" invisible={!sortActive}>
+        <SortIcon />
+      </Badge>
     </IconButton>
     <Search />
   </>
