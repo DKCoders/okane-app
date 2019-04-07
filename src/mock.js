@@ -1,10 +1,13 @@
 import moment from 'moment';
+import { normalizatorById } from './utils/helpers';
 
 export const categories = [
   { id: 'cat1', name: 'categoria 1', color: 'red' },
   { id: 'cat2', name: 'categoria 2', color: 'blue' },
   { id: 'cat3', name: 'categoria 3', color: 'green' },
 ];
+
+export const normalizedCategories = normalizatorById(categories);
 
 export const expenses = [
   {
@@ -17,3 +20,5 @@ export const expenses = [
     id: 3, categoryId: 'cat2', date: moment().subtract(1, 'day').format('YYYY-MM-DD'), description: 'description', value: 20000,
   },
 ];
+
+export const normalizedExpenses = normalizatorById(expenses);

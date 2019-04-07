@@ -14,6 +14,9 @@ const theme = createMuiTheme({
   typography: {
     useNextVariants: true,
   },
+  custom: {
+    padding: 24,
+  },
 });
 
 install();

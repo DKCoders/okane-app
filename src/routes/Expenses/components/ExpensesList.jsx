@@ -4,7 +4,6 @@ import moment from 'moment';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Avatar from '@material-ui/core/Avatar';
-import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import ExpenseIcon from '@material-ui/icons/ShoppingCart';
 import IncomeIcon from '@material-ui/icons/AttachMoney';
@@ -17,6 +16,8 @@ import AppBar from '../../../components/StyledAppBar';
 import ListBlock from '../../../components/ListBlock';
 import SortDialog from '../../../components/SortDialog';
 import FilterDialog from '../../../components/FilterDialog';
+import CategoryTitle from '../../../components/CategoryTitle';
+import Currency from '../../../components/Currency';
 import { categories, expenses } from '../../../mock';
 
 const monthPickerProps = {
@@ -38,17 +39,6 @@ const avatarRenderText = item => <Avatar>{moment(item.date).format('DD')}</Avata
 
 const dayTitle = date => (
   <Typography variant="h6" align="center">{moment(date).format('ddd DD')}</Typography>
-);
-
-const categoryTitle = category => (
-  <Grid container wrap="nowrap" alignItems="center" justify="center" spacing={16}>
-    <Grid item>
-      {avatarRenderColor({ category })}
-    </Grid>
-    <Grid item>
-      <Typography variant="h6" inline>{category.name}</Typography>
-    </Grid>
-  </Grid>
 );
 
 const sortOptions = [
@@ -133,16 +123,16 @@ const ExpensesList = ({ t, match, history }) => {
         title={dayTitle(moment())}
         renderAvatar={avatarRenderColor}
         renderText={item => item.description}
-        renderAction={item => item.value}
+        renderAction={item => <Currency value={item.value} />}
         items={expenses}
         keyProp="id"
         onItemClick={onItemClick}
       />
       <ListBlock
-        title={categoryTitle({ name: 'category', color: 'red' })}
+        title={<CategoryTitle category={{ name: 'category', color: 'red' }} />}
         renderAvatar={avatarRenderText}
         renderText={item => item.description}
-        renderAction={item => item.value}
+        renderAction={item => <Currency value={item.value} />}
         items={expenses}
         keyProp="id"
         onItemClick={onItemClick}
