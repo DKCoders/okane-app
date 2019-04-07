@@ -29,7 +29,10 @@ const ListBlock = ({
                 {renderAvatar(item, index)}
               </ListItemAvatar>
             )}
-            <ListItemText primary={renderText(item, index)} />
+            <ListItemText
+              primaryTypographyProps={{ noWrap: true }}
+              primary={renderText(item, index)}
+            />
             {renderAction && (
               <ListItemSecondaryAction>
                 {renderAction(item, index)}

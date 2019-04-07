@@ -11,7 +11,7 @@ export const normalizedCategories = normalizatorById(categories);
 
 export const expenses = [
   {
-    id: 1, categoryId: 'cat1', date: moment().format('YYYY-MM-DD'), description: 'description', value: 10000,
+    id: 1, categoryId: 'cat1', date: moment().format('YYYY-MM-DD'), description: 'Long description jajaja jajaj jajajaj ajajja aj aja aj haha ksj ttty hdh jdhfh sjsj ss', value: 10000,
   },
   {
     id: 2, categoryId: 'cat1', date: moment().subtract(1, 'day').format('YYYY-MM-DD'), description: 'description', value: 10000,
