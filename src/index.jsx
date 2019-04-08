@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { install, ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import { init } from '@rematch/core';
 import { Provider } from 'react-redux';
 import { ProppyProvider } from 'proppy-react';
@@ -29,7 +29,7 @@ const { dispatch, getState } = store;
 const providers = { dispatch, getState };
 
 ReactDOM.render((
-  <BrowserRouter>
+  <Router>
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <ProppyProvider providers={providers}>
@@ -37,5 +37,5 @@ ReactDOM.render((
         </ProppyProvider>
       </ThemeProvider>
     </Provider>
-  </BrowserRouter>
+  </Router>
 ), document.getElementById('root'));

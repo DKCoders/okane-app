@@ -14,6 +14,7 @@
     "proppy": "^1.2.6",
     "proppy-react": "^1.2.6",
     "ramda": "^0.26.1",
+    "randomcolor": "^0.5.4",
     "react": "^16.8.6",
     "react-color": "^2.17.0",
     "react-dom": "^16.8.6",
