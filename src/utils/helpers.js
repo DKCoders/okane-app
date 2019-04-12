@@ -128,3 +128,12 @@ export const objectToQueryParams = (params = {}) => {
   }
   return `?${entriesJoiner(entries)}`;
 };
+
+export const getFromLocalStorage = (key) => {
+  const items = localStorage.getItem(key);
+  return items ? JSON.parse(items) : [];
+};
+export const setToLocalStorage = (key, items) => {
+  localStorage.setItem(key, JSON.stringify(items));
+  return true;
+};
