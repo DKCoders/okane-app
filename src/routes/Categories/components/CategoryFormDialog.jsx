@@ -9,8 +9,8 @@ import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/styles';
-import { useTranslation } from '../../../services/translation';
-import asService from '../../../hoc/asService';
+import { useTranslation } from 'services/translation';
+import asService from 'hoc/asService';
 
 const useStyles = makeStyles({
   margin: {

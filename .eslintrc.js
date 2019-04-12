@@ -11,4 +11,12 @@ module.exports = {
   },
   'env': {},
   'plugins': [],
+  settings: {
+    'import/resolver': {
+      'node': {
+        'paths': ['./src'],
+        'moduleDirectories': ['node_modules']
+      }
+    }
+  }
 };
