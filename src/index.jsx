@@ -4,7 +4,8 @@ import { install, ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { HashRouter as Router } from 'react-router-dom';
 import { init } from '@rematch/core';
-import { Provider } from 'react-redux';
+import { StoreContext } from 'redux-react-hook';
+import { SnackbarProvider } from 'notistack';
 import { ProppyProvider } from 'proppy-react';
 import App from './components/App';
 import models from './modules';
@@ -30,12 +31,14 @@ const providers = { dispatch, getState };
 
 ReactDOM.render((
   <Router>
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <ProppyProvider providers={providers}>
-          <App />
-        </ProppyProvider>
-      </ThemeProvider>
-    </Provider>
+    <SnackbarProvider maxSnack={3}>
+      <StoreContext.Provider value={store}>
+        <ThemeProvider theme={theme}>
+          <ProppyProvider providers={providers}>
+            <App />
+          </ProppyProvider>
+        </ThemeProvider>
+      </StoreContext.Provider>
+    </SnackbarProvider>
   </Router>
 ), document.getElementById('root'));

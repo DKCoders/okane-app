@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 // import PropTypes from 'prop-types';
+import { useMappedState, useDispatch } from 'redux-react-hook';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
@@ -13,16 +14,31 @@ import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { useSnackbar } from 'notistack';
 import Navbar from '../../../components/Navbar';
 import MenuButton from '../../../components/MenuButton';
 import Search from '../../../components/Search';
 import { useTranslation } from '../../../services/translation';
 import confirmDialog from '../../../services/confirmDialog';
 import categoryFormDialogService from './CategoryFormDialog';
-import { categories } from '../../../mock';
 
 const CategoriesList = () => {
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  // State connection
+  const mapState = useCallback(state => ({
+    categories: Object.values(state.categories.categories),
+  }), []);
+  const { categories } = useMappedState(mapState);
+  const dispatch = useDispatch();
+  // Error handler
+  const onFetchError = useCallback((e) => {
+    enqueueSnackbar(e.message);
+  }, []);
+  // Did mount
+  useEffect(() => {
+    dispatch.categories.fetchCategories({ reject: onFetchError });
+  }, []);
   // Menu state
   const [anchor, setAnchor] = useState(null);
   const [item, setItem] = useState(null);
@@ -65,7 +81,11 @@ const CategoriesList = () => {
         right={(<Search />)}
       />
       <List>
-        {categories.map(category => (
+        {!categories.length ? (
+          <ListItem>
+            <ListItemText primary={t('Empty')} />
+          </ListItem>
+        ) : categories.map(category => (
           <ListItem key={category.id}>
             <ListItemAvatar>
               <Avatar style={{ backgroundColor: category ? category.color : 'lightgray' }} />

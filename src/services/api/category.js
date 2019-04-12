@@ -1,6 +1,6 @@
 import { getFromLocalStorage, setToLocalStorage } from '../../utils/helpers';
 
-class CategoriesApi {
+class CategoryApi {
   static getAll() {
     return new Promise((resolve) => {
       const items = getFromLocalStorage('categories');
@@ -51,4 +51,4 @@ class CategoriesApi {
   }
 }
 
-export default CategoriesApi;
+export default CategoryApi;

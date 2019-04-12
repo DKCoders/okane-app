@@ -55,4 +55,5 @@ export default {
   No: 'No',
   'Edit category': 'Editar categoria',
   'New category': 'Nueva categoria',
+  Empty: 'Vacio',
 };

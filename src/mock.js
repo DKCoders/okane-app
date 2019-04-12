@@ -5,6 +5,7 @@ export const categories = [
   { id: 'cat1', name: 'categoria 1', color: 'red' },
   { id: 'cat2', name: 'categoria 2', color: 'blue' },
   { id: 'cat3', name: 'categoria 3', color: 'green' },
+  { id: 'cat4', name: 'categoria 4', color: 'purple' },
 ];
 
 export const normalizedCategories = normalizatorById(categories);
