@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
-// import PropTypes from 'prop-types';
+import randomColor from 'randomcolor';
 import { useMappedState, useDispatch } from 'redux-react-hook';
+import { makeStyles } from '@material-ui/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
@@ -11,9 +12,11 @@ import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
+import Fab from '@material-ui/core/Fab';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
 import { useSnackbar } from 'notistack';
 import Navbar from '../../../components/Navbar';
 import MenuButton from '../../../components/MenuButton';
@@ -22,7 +25,21 @@ import { useTranslation } from '../../../services/translation';
 import confirmDialog from '../../../services/confirmDialog';
 import categoryFormDialogService from './CategoryFormDialog';
 
+const template = {
+  name: '',
+  color: randomColor(),
+};
+
+const useStyles = makeStyles(theme => ({
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing.unit * 2,
+    right: theme.spacing.unit * 2,
+  },
+}));
+
 const CategoriesList = () => {
+  const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   // State connection
@@ -36,8 +53,11 @@ const CategoriesList = () => {
     enqueueSnackbar(e.message);
   }, []);
   // Did mount
-  useEffect(() => {
+  const fetchData = useCallback(() => {
     dispatch.categories.fetchCategories({ reject: onFetchError });
+  }, []);
+  useEffect(() => {
+    fetchData();
   }, []);
   // Menu state
   const [anchor, setAnchor] = useState(null);
@@ -47,20 +67,27 @@ const CategoriesList = () => {
     setItem(_item);
   };
   // Handlers
-  const onEdit = async () => {
+  const onAdd = useCallback(async () => {
     setAnchor(null);
-    try {
-      const edited = await categoryFormDialogService.show({ item });
-      if (edited) {
-        console.log(edited);
-      }
-    } catch (e) {
-      throw e;
-    } finally {
-      setItem(null);
+    const added = await categoryFormDialogService.show({
+      item: { ...template, color: randomColor() },
+    });
+    if (added) {
+      const resolve = () => setItem(null);
+      dispatch.categories.addCategory({ item: added, resolve, reject: onFetchError });
     }
-  };
-  const onRemove = async () => {
+  }, [item]);
+  const onEdit = useCallback(async () => {
+    setAnchor(null);
+    const edited = await categoryFormDialogService.show({ item });
+    if (edited) {
+      const resolve = () => setItem(null);
+      dispatch.categories.editCategory({
+        item: edited, resolve, reject: onFetchError, id: item.id,
+      });
+    }
+  }, [item]);
+  const onRemove = useCallback(async () => {
     setAnchor(null);
     const confirm = await confirmDialog.show({
       title: t('Confirmation'),
@@ -69,10 +96,10 @@ const CategoriesList = () => {
       cancelText: t('No'),
     });
     if (confirm) {
-      console.log('Here I remove', item);
+      dispatch.categories.removeCategory({ id: item.id, reject: onFetchError });
     }
     setItem(null);
-  };
+  }, [item]);
   return (
     <>
       <Navbar
@@ -118,6 +145,9 @@ const CategoriesList = () => {
           <ListItemText primary={t('Remove')} />
         </MenuItem>
       </Menu>
+      <Fab color="secondary" className={classes.fab} onClick={onAdd}>
+        <AddIcon />
+      </Fab>
     </>
   );
 };

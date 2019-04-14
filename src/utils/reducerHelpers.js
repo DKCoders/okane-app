@@ -27,6 +27,11 @@ export const regularSetByIdReducer = (...keys) => (state, item) => update(
   keys.reduceRight(keyReduceFunction(item.id, { $set: item }), {}),
 );
 
+export const regularUnsetByIdReducer = (...keys) => (state, item) => update(
+  state,
+  keys.reduceRight(keyReduceFunction(item.id, { $unset: item }), {}),
+);
+
 export const arrayDefaultReducer = reducerMaker([]);
 export const arraySetReducer = arrayDefaultReducer('$set');
 

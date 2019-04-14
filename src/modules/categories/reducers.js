@@ -1,4 +1,4 @@
-import { regularSetReducer } from '../../utils/reducerHelpers';
+import { regularSetReducer, regularSetByIdReducer, omitReducer } from '../../utils/reducerHelpers';
 
 export const initialState = {
   categories: {},
@@ -6,4 +6,6 @@ export const initialState = {
 
 export const reducers = {
   setCategories: regularSetReducer('categories'),
+  setCategoryById: regularSetByIdReducer('categories'),
+  removeCategoryById: omitReducer('categories'),
 };

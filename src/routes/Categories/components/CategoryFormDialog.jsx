@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
+import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -16,17 +17,33 @@ const useStyles = makeStyles({
   margin: {
     marginRight: '.5em',
   },
+  error: {
+    marginLeft: '3em',
+  },
 });
 
 const CategoryFormDialog = ({
-  open, onCancel, onConfirm, isNew, item,
+  open = false, onCancel, onConfirm, isNew, item,
 }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const [editable, setEditable] = useState(null);
+  const [error, setError] = useState(null);
   useEffect(() => {
-    setEditable(item);
+    if (open) {
+      setError(null);
+      setEditable(item);
+    }
   }, [open]);
+  // Handlers
+  const onSave = useCallback((event) => {
+    if (editable && editable.name) {
+      setError(null);
+      onConfirm(editable, event);
+    } else {
+      setError(t('Required'));
+    }
+  }, [onConfirm, editable]);
   return (
     <Dialog
       open={open}
@@ -37,25 +54,30 @@ const CategoryFormDialog = ({
       <DialogTitle id="alert-dialog-title">{t(isNew ? 'New category' : 'Edit category')}</DialogTitle>
       <DialogContent>
         {editable && (
-          <div>
-            <IconButton
-              className={classes.margin}
-              style={{ backgroundColor: editable.color }}
-              onClick={() => setEditable({ ...editable, color: randomColor() })}
-            />
-            <Input
-              placeholder={t('Name')}
-              onChange={({ target: { value } }) => setEditable({ ...editable, name: value })}
-              value={editable.name}
-            />
-          </div>
+          <>
+            <div>
+              <IconButton
+                className={classes.margin}
+                style={{ backgroundColor: editable.color }}
+                onClick={() => setEditable({ ...editable, color: randomColor() })}
+              />
+              <Input
+                placeholder={t('Name')}
+                onChange={({ target: { value } }) => setEditable({ ...editable, name: value })}
+                value={editable.name}
+                error={!!error}
+                required
+              />
+            </div>
+            {error && (<Typography variant="overline" color="error" className={classes.error}>{error}</Typography>)}
+          </>
         )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel} color="primary">
           {t('Cancel')}
         </Button>
-        <Button onClick={event => onConfirm(editable, event)} color="primary" autoFocus>
+        <Button onClick={onSave} color="primary" autoFocus>
           {t('Save')}
         </Button>
       </DialogActions>
