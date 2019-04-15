@@ -6,7 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import LeftRightButtons from './LeftRightButtons';
+import LeftRightButtons from '../../LeftRightButtons/LeftRightButtons';
 import months from '../months';
 import { withTranslation } from '../../../services/translation';
 

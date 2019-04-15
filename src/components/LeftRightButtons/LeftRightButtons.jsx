@@ -16,7 +16,7 @@ const styles = {
 const LeftRightButtons = ({
   onLeftClick, onRightClick, children, classes,
 }) => (
-  <Grid container justify="space-between" wrap="nowrap">
+  <Grid container justify="space-between" alignItems="center" wrap="nowrap">
     <Grid item>
       <IconButton onClick={onLeftClick}>
         <ChevronLeftIcon />

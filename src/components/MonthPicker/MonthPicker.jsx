@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import MonthPickerDialog from './components/MonthPickerDialog';
-import LeftRightButtons from './components/LeftRightButtons';
+import LeftRightButtons from '../LeftRightButtons';
 import months from './months';
 import { useTranslation } from '../../services/translation';
 
