@@ -31,6 +31,8 @@ export default {
   'Edit Class': 'Editar Clase',
   'New Class': 'Nuevo Clase',
   Expenses: 'Gastos',
+  Expense: 'Gasto',
+  'New Expense': 'Nuevo Gasto',
   January: 'Enero',
   February: 'Febrero',
   March: 'Marzo',
