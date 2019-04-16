@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
+import moment from 'moment';
 import es from './files/es';
 
 let activeFile = null;
+let activeKey = null;
 class TranslateService {
   static t(str) {
     if (!activeFile) {
@@ -15,11 +17,17 @@ class TranslateService {
   }
 
   static setLanguage(key) {
+    activeKey = key;
     if (key === 'es') {
       activeFile = es;
     } else {
       activeFile = null;
     }
+    moment.locale(key || 'en');
+  }
+
+  static getLanguage() {
+    return activeKey;
   }
 }
 

@@ -58,4 +58,9 @@ export default {
   'Edit category': 'Editar categoria',
   'New category': 'Nueva categoria',
   Empty: 'Vacio',
+  Description: 'Descripcion',
+  Amount: 'Monto',
+  'Nothing selected': 'Nada seleccionado',
+  'Please fill out this field.': 'Por favor complete este campo',
+  'Please select an item in the list.': 'Por favor seleccione un elemento de la lista',
 };

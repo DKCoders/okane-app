@@ -2,10 +2,12 @@ import { regularSetReducer, regularSetByIdReducer, omitReducer } from '../../uti
 
 export const initialState = {
   categories: {},
+  fetched: false,
 };
 
 export const reducers = {
   setCategories: regularSetReducer('categories'),
   setCategoryById: regularSetByIdReducer('categories'),
   removeCategoryById: omitReducer('categories'),
+  setFetched: regularSetReducer('fetched'),
 };

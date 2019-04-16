@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {
+  useState, useEffect, useMemo, useCallback,
+} from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Grid from '@material-ui/core/Grid';
@@ -24,7 +26,9 @@ const getMiddle = (middle, setMiddle, operation = 'subtract') => {
   setMiddle(newMiddle);
 };
 
-const DayPicker = ({ value, onChange }) => {
+const DayPicker = ({
+  value, onChange, name, asInput,
+}) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
   // States
@@ -40,6 +44,17 @@ const DayPicker = ({ value, onChange }) => {
     const add = () => getMiddle(middle, setMiddle, 'add');
     return { onLeft: subtract, onRight: add };
   }, [middle]);
+  const onPickerChange = useCallback((newDate) => {
+    if (!asInput) {
+      onChange(newDate);
+    } else {
+      onChange({
+        target: {
+          name, value: newDate, validity: { valid: true }, validationMessage: '',
+        },
+      });
+    }
+  }, [onChange, asInput, name]);
   return (
     <LeftRightButtons
       onLeftClick={onLeft}
@@ -53,7 +68,7 @@ const DayPicker = ({ value, onChange }) => {
               <DayButton
                 date={buttonDateString}
                 active={value === buttonDateString}
-                onClick={onChange}
+                onClick={onPickerChange}
               />
             </Grid>
           );
@@ -66,8 +81,13 @@ const DayPicker = ({ value, onChange }) => {
 DayPicker.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  asInput: PropTypes.bool,
+  name: PropTypes.string,
 };
 
-DayPicker.defaultProps = {};
+DayPicker.defaultProps = {
+  asInput: false,
+  name: null,
+};
 
 export default DayPicker;
