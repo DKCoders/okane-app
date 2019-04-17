@@ -7,6 +7,7 @@ const effects = {
       const data = await api.getAll();
       const normalized = normalizatorById(data);
       this.setExpenses(normalized);
+      this.setFetched(true);
       if (resolve) resolve();
     } catch (e) {
       if (reject) reject(e);

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useMappedState, useDispatch } from 'redux-react-hook';
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
 import Navbar from '../../../components/Navbar';
@@ -10,7 +11,6 @@ import CategoryTitle from '../../../components/CategoryTitle';
 import Currency from '../../../components/Currency';
 import LeftAndRight from '../../../components/LeftAndRight';
 import { useTranslation } from '../../../services/translation';
-import { normalizedExpenses, normalizedCategories } from '../../../mock';
 
 const useStyles = makeStyles(theme => ({
   spacing: {
@@ -20,29 +20,52 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ExpenseView = ({ match: { params: { id } } }) => {
+const ExpenseView = ({ history, match: { url, params: { id } } }) => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const expense = normalizedExpenses[id];
-  return !!expense && (
+  // Redux State
+  const mapState = useCallback(state => ({
+    categories: state.categories.categories,
+    categoriesFetched: state.categories.fetched,
+    expense: state.expenses.expenses && state.expenses.expenses[id],
+    expensesFetched: state.expenses.fetched,
+  }), [id]);
+  const {
+    categories, categoriesFetched, expense, expensesFetched,
+  } = useMappedState(mapState);
+  const dispatch = useDispatch();
+  // didMount
+  useEffect(() => {
+    if (!categoriesFetched) {
+      dispatch.categories.fetchCategories();
+    }
+    if (!expensesFetched) {
+      dispatch.expenses.fetchExpenses();
+    }
+  }, []);
+  // Handlers
+  const onEdit = useCallback(() => {
+    history.push(`${url}/edit`);
+  }, []);
+  return !!expense && !!categories && (
     <>
       <Navbar
         left={<BackButton to="/expenses" />}
         title={t('Expense')}
-        right={<EraseEditButtons />}
+        right={<EraseEditButtons onEditClick={onEdit} />}
       />
       <LeftAndRight
         className={classes.spacing}
         left={(
-          <CategoryTitle category={normalizedCategories[expense.categoryId]} justify="flex-start" />
+          <CategoryTitle category={categories[expense.categoryId]} justify="flex-start" />
         )}
-        right={moment(expense.date).format('DD/MM/YYYY')}
+        right={moment(expense.date).format('ddd DD/MM/YYYY')}
       />
       <InfoBox title={t('Description')} content={expense.description} />
       <LeftAndRight
         className={classes.spacing}
         left={t('Amount')}
-        right={(<Currency value={expense.value} />)}
+        right={(<Currency value={expense.amount} />)}
       />
     </>
   );
@@ -50,6 +73,7 @@ const ExpenseView = ({ match: { params: { id } } }) => {
 
 ExpenseView.propTypes = {
   match: PropTypes.shape().isRequired,
+  history: PropTypes.shape().isRequired,
 };
 
 ExpenseView.defaultProps = {};

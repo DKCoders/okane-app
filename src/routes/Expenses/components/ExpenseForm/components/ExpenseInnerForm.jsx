@@ -123,7 +123,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
   return (
     <form onSubmit={handleSubmit} noValidate>
       <Navbar
-        left={<BackButton to="/expenses" />}
+        left={<BackButton to={!id ? '/expenses' : `/expenses/${id}`} />}
         title={t(!id ? 'New Expense' : 'Edit Expense')}
         right={(
           <IconButton color="inherit" disabled={pristine || submitting} type="submit">

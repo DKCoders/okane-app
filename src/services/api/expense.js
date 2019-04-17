@@ -11,10 +11,8 @@ class ExpenseApi {
 
   static getById(id) {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        const items = getFromLocalStorage('expenses');
-        resolve(items.find(item => item.id === id));
-      }, 2000);
+      const items = getFromLocalStorage('expenses');
+      resolve(items.find(item => item.id === id));
     });
   }
 

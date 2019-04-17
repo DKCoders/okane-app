@@ -2,10 +2,12 @@ import { regularSetReducer, regularSetByIdReducer, omitReducer } from '../../uti
 
 export const initialState = {
   expenses: {},
+  fetched: false,
 };
 
 export const reducers = {
   setExpenses: regularSetReducer('expenses'),
   setExpenseById: regularSetByIdReducer('expenses'),
   removeExpenseById: omitReducer('expenses'),
+  setFetched: regularSetReducer('fetched'),
 };
