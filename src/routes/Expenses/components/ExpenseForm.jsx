@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { useFormState } from 'react-use-form-state';
-import { useMappedState, useDispatch } from 'redux-react-hook';
+import { useField, useForm } from 'react-final-form-hooks';
+import { useDispatch, useMappedState } from 'redux-react-hook';
 import IconButton from '@material-ui/core/IconButton';
 import DoneIcon from '@material-ui/icons/Done';
 import Grid from '@material-ui/core/Grid';
@@ -12,6 +12,7 @@ import Navbar from '../../../components/Navbar';
 import BackButton from '../../../components/BackButton';
 import DayPicker from './DayPicker';
 import { useTranslation } from '../../../services/translation';
+import { makeValidator } from '../../../utils/helpers';
 
 const useStyles = makeStyles(theme => ({
   spacing: {
@@ -24,13 +25,24 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const makeGetErrorAndHelperText = (formState, t = str => str) => (key) => {
-  const error = !!formState.touched[key] && !formState.validity[key];
-  const helperText = !!error && t(formState.errors[key]);
+const rules = [
+  { key: 'date', validators: ['required'] },
+  { key: 'description', validators: ['required'] },
+  { key: 'categoryId', validators: ['required'] },
+  { key: 'amount', validators: ['required', 'number', 'positive'] },
+];
+
+const validate = makeValidator(rules);
+
+const makeGetErrorAndHelperText = (t = str => str) => (field) => {
+  const helperText = field.meta.touched && field.meta.error && t(field.meta.error);
+  const error = !!helperText;
   return { error, helperText };
 };
 
 const selectProps = { native: true };
+
+const onSubmit = values => ({});
 
 const ExpenseForm = ({ match: { params: { id } } }) => {
   const { t } = useTranslation();
@@ -48,33 +60,43 @@ const ExpenseForm = ({ match: { params: { id } } }) => {
       dispatch.categories.fetchCategories();
     }
   }, []);
-  const [formState, { text, select, number }] = useFormState({
-    date: moment().format('YYYY-MM-DD'),
-    description: '',
-    categoryId: '',
-    amount: '',
+  // Form state
+  const {
+    form, handleSubmit, pristine, submitting,
+  } = useForm({
+    onSubmit, // the function to call with your form values upon valid submit
+    validate, // a record-level validation function to check all form values
+    initialValues: {
+      date: moment().format('YYYY-MM-DD'),
+      description: '',
+      categoryId: '',
+      amount: '',
+    },
   });
-  console.log(formState);
-  const getErrorAndHelperText = makeGetErrorAndHelperText(formState, t);
+  const date = useField('date', form);
+  const description = useField('description', form);
+  const categoryId = useField('categoryId', form);
+  const amount = useField('amount', form);
+  const getErrorAndHelperText = makeGetErrorAndHelperText(t);
   return (
-    <>
+    <form onSubmit={handleSubmit} noValidate>
       <Navbar
         left={<BackButton to="/expenses" />}
         title={t(!id ? 'New Expense' : 'Edit Expense')}
         right={(
-          <IconButton color="inherit" disabled>
+          <IconButton color="inherit" disabled={pristine || submitting} type="submit">
             <DoneIcon />
           </IconButton>
         )}
       />
       <div className={classes.dayPickerWrapper}>
-        <DayPicker {...text('date')} asInput />
+        <DayPicker {...date.input} asInput />
       </div>
       <Grid container direction="column" className={classes.spacing} spacing={16}>
         <Grid item>
           <TextField
-            {...text('description')}
-            {...getErrorAndHelperText('description')}
+            {...description.input}
+            {...getErrorAndHelperText(description)}
             label={t('Description')}
             required
             fullWidth
@@ -82,14 +104,14 @@ const ExpenseForm = ({ match: { params: { id } } }) => {
         </Grid>
         <Grid item>
           <TextField
-            {...select('categoryId')}
-            {...getErrorAndHelperText('categoryId')}
+            {...categoryId.input}
+            {...getErrorAndHelperText(categoryId)}
             label={t('Category')}
             required
             fullWidth
             select
             SelectProps={selectProps}
-            InputLabelProps={{ shrink: !!formState.values.categoryId }}
+            InputLabelProps={{ shrink: !!categoryId.input.value }}
           >
             <option value="" />
             {Object.values(categories).map(category => (
@@ -99,15 +121,16 @@ const ExpenseForm = ({ match: { params: { id } } }) => {
         </Grid>
         <Grid item>
           <TextField
-            {...number('amount')}
-            {...getErrorAndHelperText('amount')}
+            {...amount.input}
+            {...getErrorAndHelperText(amount)}
+            type="number"
             label={t('Amount')}
             required
             fullWidth
           />
         </Grid>
       </Grid>
-    </>
+    </form>
   );
 };
 

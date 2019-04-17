@@ -63,4 +63,6 @@ export default {
   'Nothing selected': 'Nada seleccionado',
   'Please fill out this field.': 'Por favor complete este campo',
   'Please select an item in the list.': 'Por favor seleccione un elemento de la lista',
+  'The value is not a valid number.': 'El valor no es un numero valido.',
+  'The value must be a positive number.': 'El valor debe ser un numero positivo',
 };

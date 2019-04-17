@@ -2,6 +2,7 @@
 import {
   reduce, map, curry, prop, sort, join, compose, filter,
 } from 'ramda';
+import errorMessages from './errorMessages';
 
 export const padStart = number => number.toString().padStart(2, '0');
 export const formatCurrency = (number, decimals = 2) => number.toFixed(decimals).replace(/\d(?=(\d{3})+\.)/g, '$&,');
@@ -137,3 +138,25 @@ export const setToLocalStorage = (key, items) => {
   localStorage.setItem(key, JSON.stringify(items));
   return true;
 };
+
+export const makeValidator = rules => values => rules.reduce((errors, { key, validators }) => {
+  const error = validators.find((validator) => {
+    switch (validator) {
+      case 'required': {
+        return !values[key];
+      }
+      case 'number': {
+        return Number.isNaN(+values[key]);
+      }
+      case 'positive': {
+        return Number.isNaN(+values[key]) || +values[key] <= 0;
+      }
+      default:
+        return false;
+    }
+  });
+  if (error) {
+    return { ...errors, [key]: errorMessages[error] || error };
+  }
+  return errors;
+}, {});

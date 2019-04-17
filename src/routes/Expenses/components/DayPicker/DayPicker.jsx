@@ -29,6 +29,7 @@ const getMiddle = (middle, setMiddle, operation = 'subtract') => {
 const DayPicker = ({
   value, onChange, name, asInput,
 }) => {
+  if (!value) return null;
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
   // States
