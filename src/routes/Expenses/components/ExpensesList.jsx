@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Tabs from '@material-ui/core/Tabs';
@@ -9,6 +9,7 @@ import ExpenseIcon from '@material-ui/icons/ShoppingCart';
 import IncomeIcon from '@material-ui/icons/AttachMoney';
 import Navbar from '../../../components/Navbar';
 import MenuButton from '../../../components/MenuButton';
+import AddFabButton from '../../../components/AddFabButton';
 import FilterSortSearchButtons from '../../../components/FilterSortSearchButtons';
 import { withTranslation } from '../../../services/translation';
 import MonthPicker from '../../../components/MonthPicker';
@@ -74,9 +75,12 @@ const ExpensesList = ({ t, match, history }) => {
   const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState({});
   // Handlers
-  const onItemClick = (item) => {
+  const onItemClick = useCallback((item) => {
     history.push(`${match.url}/${item.id}`);
-  };
+  }, [match.url]);
+  const onAddClick = useCallback(() => {
+    history.push(`${match.url}/new`);
+  }, [match.url]);
   return (
     <>
       <Navbar
@@ -137,6 +141,7 @@ const ExpensesList = ({ t, match, history }) => {
         keyProp="id"
         onItemClick={onItemClick}
       />
+      <AddFabButton onClick={onAddClick} />
     </>
   );
 };
