@@ -9,6 +9,13 @@ class ExpenseApi {
     });
   }
 
+  static getById(id) {
+    return new Promise((resolve) => {
+      const items = getFromLocalStorage('expenses');
+      resolve(items.find(item => item.id === id));
+    });
+  }
+
   static post(item) {
     return new Promise((resolve) => {
       const items = getFromLocalStorage('expenses');

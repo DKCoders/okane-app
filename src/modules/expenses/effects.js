@@ -12,25 +12,16 @@ const effects = {
       if (reject) reject(e);
     }
   },
-  async addExpense({ resolve, reject, item } = {}) {
-    try {
-      const newItem = await api.post(item);
-      this.setExpenseById(newItem);
-      if (resolve) resolve();
-    } catch (e) {
-      if (reject) reject(e);
-    }
+  async addExpense(item) {
+    const newItem = await api.post(item);
+    this.setExpenseById(newItem);
+    return newItem;
   },
   async editExpense({
-    resolve, reject, item, id,
+    item, id,
   } = {}) {
-    try {
-      const updatedItem = await api.put(id, item);
-      this.setExpenseById(updatedItem);
-      if (resolve) resolve();
-    } catch (e) {
-      if (reject) reject(e);
-    }
+    const updatedItem = await api.put(id, item);
+    this.setExpenseById(updatedItem);
   },
   async removeExpense({
     resolve, reject, id,

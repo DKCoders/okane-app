@@ -60,6 +60,7 @@ export default {
   Empty: 'Vacio',
   Description: 'Descripcion',
   Amount: 'Monto',
+  'Create another after save': 'Crear otro luego de guardar',
   'Nothing selected': 'Nada seleccionado',
   'Please fill out this field.': 'Por favor complete este campo',
   'Please select an item in the list.': 'Por favor seleccione un elemento de la lista',

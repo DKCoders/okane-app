@@ -2,17 +2,22 @@ import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { useField, useForm } from 'react-final-form-hooks';
+import { useBoolean } from 'react-hanger';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 import IconButton from '@material-ui/core/IconButton';
 import DoneIcon from '@material-ui/icons/Done';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/styles';
-import Navbar from '../../../components/Navbar';
-import BackButton from '../../../components/BackButton';
+import { FORM_ERROR } from 'final-form';
+import Navbar from '../../../../../components/Navbar';
+import BackButton from '../../../../../components/BackButton';
 import DayPicker from './DayPicker';
-import { useTranslation } from '../../../services/translation';
-import { makeValidator } from '../../../utils/helpers';
+import { useTranslation } from '../../../../../services/translation';
+import { makeValidator } from '../../../../../utils/helpers';
 
 const useStyles = makeStyles(theme => ({
   spacing: {
@@ -42,9 +47,14 @@ const makeGetErrorAndHelperText = (t = str => str) => (field) => {
 
 const selectProps = { native: true };
 
-const onSubmit = values => ({});
+const newInitialValues = {
+  date: moment().format('YYYY-MM-DD'),
+  description: '',
+  categoryId: '',
+  amount: '',
+};
 
-const ExpenseForm = ({ match: { params: { id } } }) => {
+const ExpenseInnerForm = ({ history, id, data }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   // Redux State
@@ -60,18 +70,50 @@ const ExpenseForm = ({ match: { params: { id } } }) => {
       dispatch.categories.fetchCategories();
     }
   }, []);
+  // Create another state
+  const createAnother = useBoolean(false);
   // Form state
+  const onSubmit = useCallback(async (values, formApi) => {
+    // Casting numbers
+    const castedValues = { ...values, amount: +values.amount };
+    try {
+      if (!id) {
+      // New
+        const newItem = await dispatch.expenses.addExpense(castedValues);
+        if (createAnother.value) {
+          const anotherInitialValues = {
+            ...newInitialValues,
+            date: castedValues.date,
+          };
+          formApi.reset(anotherInitialValues);
+        } else {
+          history.replace(`/expenses/${newItem.id}`);
+        }
+        return {};
+      }
+      // Edit
+      await dispatch.expenses.editExpense({ id, item: castedValues });
+      history.replace(`/expenses/${id}`);
+      return {};
+    } catch (e) {
+      return { [FORM_ERROR]: e.message };
+    }
+  }, [createAnother.value]);
+  let initialValues = newInitialValues;
+  if (id) {
+    const {
+      date: _date, description: _description, amount: _amount, categoryId: _categoryId,
+    } = data;
+    initialValues = {
+      date: _date, description: _description, amount: _amount, categoryId: _categoryId,
+    };
+  }
   const {
-    form, handleSubmit, pristine, submitting,
+    form, handleSubmit, pristine, submitting, submitError,
   } = useForm({
     onSubmit, // the function to call with your form values upon valid submit
     validate, // a record-level validation function to check all form values
-    initialValues: {
-      date: moment().format('YYYY-MM-DD'),
-      description: '',
-      categoryId: '',
-      amount: '',
-    },
+    initialValues,
   });
   const date = useField('date', form);
   const description = useField('description', form);
@@ -129,15 +171,35 @@ const ExpenseForm = ({ match: { params: { id } } }) => {
             fullWidth
           />
         </Grid>
+        {!id && (
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Checkbox checked={createAnother.value} onChange={createAnother.toggle} />
+              }
+              label={t('Create another after save')}
+            />
+          </Grid>
+        )}
+        {submitError && (
+          <Grid item>
+            <Typography variant="headline" color="error">{t(submitError)}</Typography>
+          </Grid>
+        )}
       </Grid>
     </form>
   );
 };
 
-ExpenseForm.propTypes = {
-  match: PropTypes.shape().isRequired,
+ExpenseInnerForm.propTypes = {
+  id: PropTypes.string,
+  history: PropTypes.shape().isRequired,
+  data: PropTypes.shape(),
 };
 
-ExpenseForm.defaultProps = {};
+ExpenseInnerForm.defaultProps = {
+  id: null,
+  data: null,
+};
 
-export default ExpenseForm;
+export default ExpenseInnerForm;

@@ -6,7 +6,7 @@ import moment from 'moment';
 import Grid from '@material-ui/core/Grid';
 import { unstable_useMediaQuery as useMediaQuery } from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/styles';
-import LeftRightButtons from '../../../../components/LeftRightButtons';
+import LeftRightButtons from '../../../../../../components/LeftRightButtons';
 import DayButton from './components/DayButton';
 
 const getButtons = (value, isSM = true) => (isSM ? [
