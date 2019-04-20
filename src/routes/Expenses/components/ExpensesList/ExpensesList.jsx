@@ -18,7 +18,8 @@ import AppBar from '../../../../components/StyledAppBar';
 import ListBlock from '../../../../components/ListBlock';
 import SortDialog from '../../../../components/SortDialog';
 import FilterDialog from '../../../../components/FilterDialog';
-import useRenders, { avatarRenderCategoryColor } from './utils/useRenders';
+import useRenders from './utils/useRenders';
+import useOptions from './utils/useOptions';
 import getGroupByFunc from './utils/getGroupByFunc';
 
 const monthPickerProps = {
@@ -31,22 +32,6 @@ const isFiltersActive = filters => Object.values(filters).some((value) => {
   }
   return value !== null;
 });
-
-const sortOptions = [
-  { text: 'Date' },
-  { text: 'Category' },
-];
-
-const filterSections = [{
-  property: 'categories',
-  title: 'Categories',
-  type: 'multi',
-  // options: categories,
-  options: [],
-  valueProp: 'id',
-  renderText: category => category.name,
-  renderAvatar: avatarRenderCategoryColor,
-}];
 
 const ExpensesList = ({ t, match, history }) => {
   // MonthPicker state
@@ -78,6 +63,8 @@ const ExpensesList = ({ t, match, history }) => {
     expenses, categories, isExpensesFetched, isCategoriesFetched,
   } = useMappedState(mapState);
   const dispatch = useDispatch();
+  // Sort and Filter Options
+  const { sortOptions, filterSections } = useOptions(categories);
   // Handlers
   const onItemClick = useCallback((item) => {
     history.push(`${match.url}/${item.id}`);
@@ -96,7 +83,6 @@ const ExpensesList = ({ t, match, history }) => {
   const {
     renderTitle, renderAvatar, renderText, renderAction,
   } = useRenders(sortIndex, categories);
-
   return (
     <>
       <Navbar
