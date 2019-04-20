@@ -10,7 +10,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import CloseIcon from '@material-ui/icons/Close';
 import SaveIcon from '@material-ui/icons/Check';
-import ClearAllIcon from '@material-ui/icons/ClearAll';
 import TextRotationDownIcon from '@material-ui/icons/TextRotationDown';
 import TextRotateUpIcon from '@material-ui/icons/TextRotateUp';
 import AppBar from '../StyledAppBar';
@@ -37,7 +36,6 @@ class SortDialog extends Component {
     this.onButtonClick = this.onButtonClick.bind(this);
     this.setInitialValues = this.setInitialValues.bind(this);
     this.onClose = this.onClose.bind(this);
-    this.onClear = this.onClear.bind(this);
     this.onSave = this.onSave.bind(this);
   }
 
@@ -64,9 +62,7 @@ class SortDialog extends Component {
       });
     } else {
       this.setState({
-        sortOption: null,
-        sortIndex: null,
-        sortDir: null,
+        sortDir: 'asc',
       });
     }
   }
@@ -77,10 +73,6 @@ class SortDialog extends Component {
       onClose(event);
       this.setInitialValues(null, null, null);
     }
-  }
-
-  onClear() {
-    this.setInitialValues(null, null, null);
   }
 
   onSave(event) {
@@ -119,14 +111,9 @@ class SortDialog extends Component {
             )}
             title={t('Sort')}
             right={(
-              <>
-                <IconButton color="inherit" onClick={this.onClear}>
-                  <ClearAllIcon />
-                </IconButton>
-                <IconButton color="inherit" onClick={this.onSave}>
-                  <SaveIcon />
-                </IconButton>
-              </>
+              <IconButton color="inherit" onClick={this.onSave}>
+                <SaveIcon />
+              </IconButton>
             )}
           />
         </AppBar>
