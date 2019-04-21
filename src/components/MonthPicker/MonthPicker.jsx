@@ -30,10 +30,10 @@ const MonthPicker = ({
   }, [onChange]);
   const onLeftClick = useCallback((event) => {
     if (onChange) onChange(...modifyDate(month, year, -1), event);
-  }, [onChange]);
+  }, [onChange, month, year]);
   const onRightClick = useCallback((event) => {
     if (onChange) onChange(...modifyDate(month, year, 1), event);
-  }, [onChange]);
+  }, [onChange, month, year]);
   return (
     <>
       <LeftRightButtons

@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  toPairs, filter, values, any, includes,
+  toPairs, filter, any, includes,
 } from 'ramda';
 import moment from 'moment';
 import { useMappedState, useDispatch } from 'redux-react-hook';
@@ -31,16 +31,15 @@ const monthPickerProps = {
 };
 
 const applyFilters = (expenses, filters) => {
-  const expensesArray = values(expenses);
   const filtersArray = toPairs(filters);
   if (!filtersArray.length) {
-    return expensesArray;
+    return expenses;
   }
   const filterFunc = expense => any(
     ([key, filterValues]) => includes(expense[key])(filterValues),
   )(filtersArray);
 
-  return filter(filterFunc)(expensesArray);
+  return filter(filterFunc)(expenses);
 };
 
 const ExpensesList = ({ t, match, history }) => {
@@ -86,8 +85,15 @@ const ExpensesList = ({ t, match, history }) => {
     if (!isCategoriesFetched) dispatch.categories.fetchCategories();
     if (!isExpensesFetched) dispatch.expenses.fetchExpenses();
   }, [isExpensesFetched, isCategoriesFetched]);
+  // Converting to array
+  const expensesArray = useMemo(() => Object.values(expenses), [expenses]);
+  // Date Filter
+  const dateFiltered = useMemo(() => filter((expense) => {
+    const date = moment(expense.date);
+    return date.month() === month && date.year() === year;
+  })(expensesArray), [expensesArray, month, year]);
   // Filtering and Mapping expenses
-  const filtered = useMemo(() => applyFilters(expenses, filters), [expenses, filters]);
+  const filtered = useMemo(() => applyFilters(dateFiltered, filters), [dateFiltered, filters]);
   const textFiltered = useMemo(() => filtered.filter(filterByKey(search)), [filtered, search]);
   const grouped = useGroupBy(textFiltered, categories, sortIndex, sortDir);
   // Renders
