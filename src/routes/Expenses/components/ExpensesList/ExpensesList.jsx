@@ -11,6 +11,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import ExpenseIcon from '@material-ui/icons/ShoppingCart';
 import IncomeIcon from '@material-ui/icons/AttachMoney';
+import useDebounceState from '../../../../hooks/useDebounceState';
+import { filterByKey } from '../../../../utils/helpers';
 import Navbar from '../../../../components/Navbar';
 import MenuButton from '../../../../components/MenuButton';
 import AddFabButton from '../../../../components/AddFabButton';
@@ -51,6 +53,8 @@ const ExpensesList = ({ t, match, history }) => {
   );
   // Tab state
   const [tab, setTab] = useState(0);
+  // Search state
+  const [search, setSearch] = useDebounceState('', 300);
   // Redux state
   const mapState = useCallback(state => ({
     expenses: state.expenses.expenses,
@@ -84,7 +88,8 @@ const ExpensesList = ({ t, match, history }) => {
   }, [isExpensesFetched, isCategoriesFetched]);
   // Filtering and Mapping expenses
   const filtered = useMemo(() => applyFilters(expenses, filters), [expenses, filters]);
-  const grouped = useGroupBy(filtered, categories, sortIndex, sortDir);
+  const textFiltered = useMemo(() => filtered.filter(filterByKey(search)), [filtered, search]);
+  const grouped = useGroupBy(textFiltered, categories, sortIndex, sortDir);
   // Renders
   const {
     renderTitle, renderAvatar, renderText, renderAction,
@@ -100,6 +105,7 @@ const ExpensesList = ({ t, match, history }) => {
             filterActive={isFilterActive}
             onSortClick={openSorters}
             onFilterClick={openFilters}
+            onSearchChange={setSearch}
           />
         )}
       />
