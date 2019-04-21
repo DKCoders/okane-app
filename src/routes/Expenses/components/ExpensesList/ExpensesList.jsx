@@ -16,22 +16,14 @@ import { withTranslation } from '../../../../services/translation';
 import MonthPicker from '../../../../components/MonthPicker';
 import AppBar from '../../../../components/StyledAppBar';
 import ListBlock from '../../../../components/ListBlock';
-import SortDialog from '../../../../components/SortDialog';
-import FilterDialog from '../../../../components/FilterDialog';
-import useRenders from './utils/useRenders';
-import useOptions from './utils/useOptions';
-import getGroupByFunc from './utils/getGroupByFunc';
+import useRenders from './hooks/useRenders';
+import useSorters from './hooks/useSorters';
+import useGroupBy from './hooks/useGroupBy';
+import useFilters from './hooks/useFilters';
 
 const monthPickerProps = {
   size: 'large',
 };
-
-const isFiltersActive = filters => Object.values(filters).some((value) => {
-  if (Array.isArray(value)) {
-    return !!value.length;
-  }
-  return value !== null;
-});
 
 const ExpensesList = ({ t, match, history }) => {
   // MonthPicker state
@@ -43,15 +35,6 @@ const ExpensesList = ({ t, match, history }) => {
   );
   // Tab state
   const [tab, setTab] = useState(0);
-  // Sort state
-  const [sortOpen, setSortOpen] = useState(false);
-  const [{ sortIndex, sortDir }, setSort] = useState({ sortIndex: 0, sortDir: 'desc' });
-  const onSortChange = ({ sortIndex: index, sortDir: dir }) => {
-    setSort({ sortIndex: index, sortDir: dir });
-  };
-  // Filter state
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [filters, setFilters] = useState({});
   // Redux state
   const mapState = useCallback(state => ({
     expenses: state.expenses.expenses,
@@ -63,8 +46,14 @@ const ExpensesList = ({ t, match, history }) => {
     expenses, categories, isExpensesFetched, isCategoriesFetched,
   } = useMappedState(mapState);
   const dispatch = useDispatch();
+  // Filter state
+  const {
+    filters, openFilters, isFilterActive, filterRender,
+  } = useFilters(categories);
   // Sort and Filter Options
-  const { sortOptions, filterSections } = useOptions(categories);
+  const {
+    sortIndex, sortDir, openSorters, sortRender,
+  } = useSorters();
   // Handlers
   const onItemClick = useCallback((item) => {
     history.push(`${match.url}/${item.id}`);
@@ -77,8 +66,8 @@ const ExpensesList = ({ t, match, history }) => {
     if (!isCategoriesFetched) dispatch.categories.fetchCategories();
     if (!isExpensesFetched) dispatch.expenses.fetchExpenses();
   }, [isExpensesFetched, isCategoriesFetched]);
-  // Mapping expenses
-  const grouped = getGroupByFunc(sortIndex)(expenses, categories, sortDir);
+  // Filtering and Mapping expenses
+  const grouped = useGroupBy(Object.values(expenses), categories, sortIndex, sortDir);
   // Renders
   const {
     renderTitle, renderAvatar, renderText, renderAction,
@@ -90,29 +79,15 @@ const ExpensesList = ({ t, match, history }) => {
         title={t('Expenses')}
         right={(
           <FilterSortSearchButtons
-            sortActive={sortIndex !== null}
-            filterActive={isFiltersActive(filters)}
-            onSortClick={() => setSortOpen(true)}
-            onFilterClick={() => setFilterOpen(true)}
+            sortActive={sortIndex !== 0 || sortDir === 'asc'}
+            filterActive={isFilterActive}
+            onSortClick={openSorters}
+            onFilterClick={openFilters}
           />
         )}
       />
-      <SortDialog
-        open={sortOpen}
-        onClose={() => setSortOpen(false)}
-        options={sortOptions}
-        translateText
-        index={sortIndex}
-        dir={sortDir}
-        onSave={onSortChange}
-      />
-      <FilterDialog
-        open={filterOpen}
-        onClose={() => setFilterOpen(false)}
-        sections={filterSections}
-        onSave={setFilters}
-        initialValue={filters}
-      />
+      {sortRender}
+      {filterRender}
       <MonthPicker
         month={month}
         year={year}

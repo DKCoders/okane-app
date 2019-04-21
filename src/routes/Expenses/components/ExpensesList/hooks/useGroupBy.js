@@ -1,6 +1,7 @@
 import {
-  compose, map, reduce, reverse, sort, toPairs, values,
+  compose, map, reduce, reverse, sort, toPairs,
 } from 'ramda';
+import { useMemo } from 'react';
 
 const groupReduce = key => reduce((acum, expense) => {
   if (!acum[expense[key]]) {
@@ -42,7 +43,6 @@ const groupByDate = (expenses, categories, sortDir) => compose(
   })),
   toPairs,
   groupReduce('date'),
-  values,
 )(expenses);
 
 const groupByCategory = (expenses, categories, sortDir) => compose(
@@ -54,10 +54,14 @@ const groupByCategory = (expenses, categories, sortDir) => compose(
   })),
   toPairs,
   groupReduce('categoryId'),
-  values,
 )(expenses);
 
 // 0: By date; 1: By category;
 const getGroupByFunc = sortIndex => (sortIndex === 0 ? groupByDate : groupByCategory);
 
-export default getGroupByFunc;
+const useGroupBy = (expenses, categories, sortIndex, sortDir) => useMemo(
+  () => getGroupByFunc(sortIndex)(expenses, categories, sortDir),
+  [expenses, categories, sortIndex, sortDir],
+);
+
+export default useGroupBy;
