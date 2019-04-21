@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import {
+  compose, toPairs, fromPairs, filter,
+} from 'ramda';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import IconButton from '@material-ui/core/IconButton';
@@ -16,6 +19,12 @@ const Transition = props => <Slide direction="up" {...props} />;
 
 const getDefaultFilters = sections => sections
   .reduce((acum, section) => ({ ...acum, [section.property]: section.type === 'multi' ? [] : null }), {});
+
+const cleanFilters = compose(
+  fromPairs,
+  filter(entries => entries[1].length),
+  toPairs,
+);
 
 const FilterDialog = ({
   open, onClose, onSave, sections, initialValue,
@@ -43,7 +52,7 @@ const FilterDialog = ({
   };
   const onSaveHandle = (event) => {
     if (onSave) {
-      onSave(filters);
+      onSave(cleanFilters(filters));
       onCloseHandle(event);
       setSelectedSection(null);
       setFilters({});

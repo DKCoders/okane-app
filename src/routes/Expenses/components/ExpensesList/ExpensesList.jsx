@@ -1,7 +1,10 @@
 import React, {
-  useState, useCallback, useEffect,
+  useState, useCallback, useEffect, useMemo,
 } from 'react';
 import PropTypes from 'prop-types';
+import {
+  toPairs, filter, values, any, includes,
+} from 'ramda';
 import moment from 'moment';
 import { useMappedState, useDispatch } from 'redux-react-hook';
 import Tabs from '@material-ui/core/Tabs';
@@ -23,6 +26,19 @@ import useFilters from './hooks/useFilters';
 
 const monthPickerProps = {
   size: 'large',
+};
+
+const applyFilters = (expenses, filters) => {
+  const expensesArray = values(expenses);
+  const filtersArray = toPairs(filters);
+  if (!filtersArray.length) {
+    return expensesArray;
+  }
+  const filterFunc = expense => any(
+    ([key, filterValues]) => includes(expense[key])(filterValues),
+  )(filtersArray);
+
+  return filter(filterFunc)(expensesArray);
 };
 
 const ExpensesList = ({ t, match, history }) => {
@@ -67,7 +83,8 @@ const ExpensesList = ({ t, match, history }) => {
     if (!isExpensesFetched) dispatch.expenses.fetchExpenses();
   }, [isExpensesFetched, isCategoriesFetched]);
   // Filtering and Mapping expenses
-  const grouped = useGroupBy(Object.values(expenses), categories, sortIndex, sortDir);
+  const filtered = useMemo(() => applyFilters(expenses, filters), [expenses, filters]);
+  const grouped = useGroupBy(filtered, categories, sortIndex, sortDir);
   // Renders
   const {
     renderTitle, renderAvatar, renderText, renderAction,
