@@ -15,24 +15,28 @@ const FilterSortSearchButtons = ({
     <>
       {!openBox.value && (
         <>
-          <IconButton
-            aria-haspopup="true"
-            color="inherit"
-            onClick={onFilterClick}
-          >
-            <Badge variant="dot" color="secondary" invisible={!filterActive}>
-              <FilterIcon />
-            </Badge>
-          </IconButton>
-          <IconButton
-            aria-haspopup="true"
-            color="inherit"
-            onClick={onSortClick}
-          >
-            <Badge variant="dot" color="secondary" invisible={!sortActive}>
-              <SortIcon />
-            </Badge>
-          </IconButton>
+          {onFilterClick && (
+            <IconButton
+              aria-haspopup="true"
+              color="inherit"
+              onClick={onFilterClick}
+            >
+              <Badge variant="dot" color="secondary" invisible={!filterActive}>
+                <FilterIcon />
+              </Badge>
+            </IconButton>
+          )}
+          {onSortClick && (
+            <IconButton
+              aria-haspopup="true"
+              color="inherit"
+              onClick={onSortClick}
+            >
+              <Badge variant="dot" color="secondary" invisible={!sortActive}>
+                <SortIcon />
+              </Badge>
+            </IconButton>
+          )}
         </>
       )}
       {!!onSearchChange && (
@@ -55,10 +59,9 @@ FilterSortSearchButtons.propTypes = {
   filterActive: PropTypes.bool,
 };
 
-const dummyFunc = () => {};
 FilterSortSearchButtons.defaultProps = {
-  onSortClick: dummyFunc,
-  onFilterClick: dummyFunc,
+  onSortClick: null,
+  onFilterClick: null,
   onSearchChange: null,
   sortActive: false,
   filterActive: false,

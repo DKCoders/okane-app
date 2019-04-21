@@ -126,7 +126,7 @@ const ExpensesList = ({ t, match, history }) => {
       <AppBar position="static">
         <Tabs value={tab} onChange={(event, value) => setTab(value)} variant="fullWidth">
           <Tab icon={<ExpenseIcon />} label={t('Expenses')} />
-          <Tab icon={<IncomeIcon />} label={t('Incomes')} />
+          <Tab disabled icon={<IncomeIcon />} label={t('Incomes')} />
         </Tabs>
       </AppBar>
       {grouped.map(({ title, items, key }) => (

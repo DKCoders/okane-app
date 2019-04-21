@@ -1,4 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, {
+  useState, useCallback, useEffect, useMemo,
+} from 'react';
 import randomColor from 'randomcolor';
 import { useMappedState, useDispatch } from 'redux-react-hook';
 import List from '@material-ui/core/List';
@@ -17,11 +19,13 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { useSnackbar } from 'notistack';
 import Navbar from '../../../components/Navbar';
 import MenuButton from '../../../components/MenuButton';
-import Search from '../../../components/Search';
+import FilterSortSearchButtons from '../../../components/FilterSortSearchButtons';
 import AddFabButton from '../../../components/AddFabButton';
 import { useTranslation } from '../../../services/translation';
 import confirmDialog from '../../../services/confirmDialog';
 import categoryFormDialogService from './CategoryFormDialog';
+import useDebounceState from '../../../hooks/useDebounceState';
+import { filterByKey } from '../../../utils/helpers';
 
 const template = {
   name: '',
@@ -31,12 +35,16 @@ const template = {
 const CategoriesList = () => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  // Search state
+  const [search, setSearch] = useDebounceState('', 300);
   // State connection
   const mapState = useCallback(state => ({
     categories: Object.values(state.categories.categories),
   }), []);
   const { categories } = useMappedState(mapState);
   const dispatch = useDispatch();
+  // Filtering
+  const filtered = useMemo(() => categories.filter(filterByKey(search)), [categories, search]);
   // Error handler
   const onFetchError = useCallback((e) => {
     enqueueSnackbar(e.message);
@@ -94,14 +102,14 @@ const CategoriesList = () => {
       <Navbar
         left={<MenuButton />}
         title="Categories"
-        right={(<Search />)}
+        right={(<FilterSortSearchButtons onSearchChange={setSearch} />)}
       />
       <List>
-        {!categories.length ? (
+        {!filtered.length ? (
           <ListItem>
-            <ListItemText primary={t('Empty')} />
+            <ListItemText primary={!search ? t('Empty') : t('Nothing found')} />
           </ListItem>
-        ) : categories.map(category => (
+        ) : filtered.map(category => (
           <ListItem key={category.id}>
             <ListItemAvatar>
               <Avatar style={{ backgroundColor: category ? category.color : 'lightgray' }} />
