@@ -5,9 +5,6 @@ import Drawer from '@material-ui/core/Drawer';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExpensesIcon from '@material-ui/icons/List';
 import BudgetsIcon from '@material-ui/icons/BubbleChart';
@@ -58,11 +55,13 @@ const MenuDrawer = () => {
               label="Budgets"
               icon={<BudgetsIcon />}
               path="/budgets"
+              disabled
             />
             <MenuDrawerItem
               label="Debts"
               icon={<DebtsIcon />}
               path="/debts"
+              disabled
             />
             <MenuDrawerItem
               label="Categories"
@@ -72,10 +71,12 @@ const MenuDrawer = () => {
           </List>
           <Divider />
           <List>
-            <ListItem button>
-              <ListItemIcon><SettingsIcon /></ListItemIcon>
-              <ListItemText primary="Settings" />
-            </ListItem>
+            <MenuDrawerItem
+              label="Settings"
+              icon={<SettingsIcon />}
+              path="/settings"
+              disabled
+            />
           </List>
         </div>
       </div>

@@ -14,8 +14,10 @@ const P = withHandlers({
   },
 });
 
-const MenuDrawerItem = ({ label, icon, onClick }) => (
-  <ListItem button onClick={onClick}>
+const MenuDrawerItem = ({
+  label, icon, onClick, disabled,
+}) => (
+  <ListItem disabled={disabled} button onClick={onClick}>
     <ListItemIcon>{icon}</ListItemIcon>
     <ListItemText primary={label} />
   </ListItem>
@@ -27,8 +29,11 @@ MenuDrawerItem.propTypes = {
   onClick: PropTypes.func.isRequired,
   history: PropTypes.shape().isRequired,
   icon: PropTypes.node.isRequired,
+  disabled: PropTypes.bool,
 };
 
-MenuDrawerItem.defaultProps = {};
+MenuDrawerItem.defaultProps = {
+  disabled: false,
+};
 
 export default withRouter(attach(P)(MenuDrawerItem));
