@@ -75,7 +75,6 @@ const MenuDrawer = () => {
               label="Settings"
               icon={<SettingsIcon />}
               path="/settings"
-              disabled
             />
           </List>
         </div>

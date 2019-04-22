@@ -4,6 +4,7 @@ import Expenses from './Expenses';
 import Budgets from './Budgets';
 import Categories from './Categories';
 import Debts from './Debts';
+import Settings from './Settings';
 
 const Routes = () => (
   <Switch>
@@ -12,6 +13,7 @@ const Routes = () => (
     <Route path="/budgets" component={Budgets} />
     <Route path="/categories" component={Categories} />
     <Route path="/debts" component={Debts} />
+    <Route path="/settings" component={Settings} />
   </Switch>
 );
 

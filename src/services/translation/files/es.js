@@ -61,6 +61,8 @@ export default {
   Description: 'Descripcion',
   Amount: 'Monto',
   'Nothing found': 'Nada encontrado',
+  'Data management': 'Manejo de datos',
+  Settings: 'Ajustes',
   'Create another after save': 'Crear otro luego de guardar',
   'Nothing selected': 'Nada seleccionado',
   'Please fill out this field.': 'Por favor complete este campo',
