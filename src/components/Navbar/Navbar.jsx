@@ -6,7 +6,7 @@ import Toolbar from '../Toolbar';
 const Navbar = ({
   left, title, right,
 }) => (
-  <AppBar position="static">
+  <AppBar position="sticky">
     <Toolbar left={left} title={title} right={right} />
   </AppBar>
 );

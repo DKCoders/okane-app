@@ -25,6 +25,9 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.custom.padding,
     marginTop: '1em',
   },
+  itemSpacing: {
+    paddingBottom: 16,
+  },
   dayPickerWrapper: {
     marginTop: '1em',
   },
@@ -134,8 +137,8 @@ const ExpenseInnerForm = ({ history, id, data }) => {
       <div className={classes.dayPickerWrapper}>
         <DayPicker {...date.input} asInput />
       </div>
-      <Grid container direction="column" className={classes.spacing} spacing={16}>
-        <Grid item>
+      <Grid container direction="column" className={classes.spacing}>
+        <Grid item className={classes.itemSpacing}>
           <TextField
             {...description.input}
             {...getErrorAndHelperText(description)}
@@ -144,7 +147,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
             fullWidth
           />
         </Grid>
-        <Grid item>
+        <Grid item className={classes.itemSpacing}>
           <TextField
             {...categoryId.input}
             {...getErrorAndHelperText(categoryId)}
@@ -161,7 +164,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
             ))}
           </TextField>
         </Grid>
-        <Grid item>
+        <Grid item className={classes.itemSpacing}>
           <TextField
             {...amount.input}
             {...getErrorAndHelperText(amount)}
@@ -172,7 +175,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
           />
         </Grid>
         {!id && (
-          <Grid item>
+          <Grid item className={classes.itemSpacing}>
             <FormControlLabel
               control={
                 <Checkbox checked={createAnother.value} onChange={createAnother.toggle} />
@@ -182,7 +185,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
           </Grid>
         )}
         {submitError && (
-          <Grid item>
+          <Grid item className={classes.itemSpacing}>
             <Typography variant="headline" color="error">{t(submitError)}</Typography>
           </Grid>
         )}
