@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import { normalizatorById } from '../../utils/helpers';
 
 const effectsGenerator = api => ({
@@ -16,9 +17,11 @@ const effectsGenerator = api => ({
     try {
       const newItem = await api.post(item);
       this.setById(newItem);
-      if (resolve) resolve();
+      if (resolve) resolve(newItem);
+      return newItem;
     } catch (e) {
       if (reject) reject(e);
+      else throw e;
     }
   },
   async edit({
@@ -27,9 +30,11 @@ const effectsGenerator = api => ({
     try {
       const updatedItem = await api.put(id, item);
       this.setById(updatedItem);
-      if (resolve) resolve();
+      if (resolve) resolve(updatedItem);
+      return updatedItem;
     } catch (e) {
       if (reject) reject(e);
+      else throw e;
     }
   },
   async remove({

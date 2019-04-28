@@ -7,6 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { withHandlers } from 'proppy';
 import { attach } from 'proppy-react';
 import { withRouter } from 'react-router-dom';
+import { useTranslation } from '../../../services/translation';
 
 const P = withHandlers({
   onClick: ({ path, history }) => () => {
@@ -16,12 +17,15 @@ const P = withHandlers({
 
 const MenuDrawerItem = ({
   label, icon, onClick, disabled,
-}) => (
-  <ListItem disabled={disabled} button onClick={onClick}>
-    <ListItemIcon>{icon}</ListItemIcon>
-    <ListItemText primary={label} />
-  </ListItem>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <ListItem disabled={disabled} button onClick={onClick}>
+      <ListItemIcon>{icon}</ListItemIcon>
+      <ListItemText primary={t(label)} />
+    </ListItem>
+  );
+};
 
 MenuDrawerItem.propTypes = {
   label: PropTypes.string.isRequired,

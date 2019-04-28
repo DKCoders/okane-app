@@ -82,7 +82,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
     try {
       if (!id) {
       // New
-        const newItem = await dispatch.expenses.add(castedValues);
+        const newItem = await dispatch.expenses.add({ item: castedValues });
         if (createAnother.value) {
           const anotherInitialValues = {
             ...newInitialValues,
