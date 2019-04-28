@@ -70,6 +70,8 @@ export default {
   'Download Backup': 'Descargar Respaldo',
   Settings: 'Ajustes',
   Erased: 'Eliminado',
+  Budgets: 'Presupuestos',
+  Debts: 'Deudas',
   'File Downloaded': 'Archivo Descargado',
   'Id not found': 'Elemento no encontrado',
   'Create another after save': 'Crear otro luego de guardar',
