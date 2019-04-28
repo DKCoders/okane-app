@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars,no-console */
+/* eslint-disable no-unused-vars,no-console,no-param-reassign */
 import {
   reduce, map, curry, prop, sort, join, compose, filter,
 } from 'ramda';
@@ -161,11 +161,85 @@ export const makeValidator = rules => values => rules.reduce((errors, { key, val
   return errors;
 }, {});
 
-export const downloadFile = (filename, blob) => {
+export const downloadFileBlob = (filename, blob) => {
   const a = document.createElement('a');
   const url = window.URL.createObjectURL(blob);
   a.href = url;
   a.download = filename;
   a.click();
   window.URL.revokeObjectURL(url);
+};
+
+export const downloadFileText = (filename, text, resolve, reject) => {
+  try {
+    const element = document.createElement('a');
+    element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`);
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+    resolve();
+  } catch (e) {
+    console.log('Error on download', e);
+    reject(e);
+  }
+};
+
+function moveFile(fileEntry, resolve, errorCallback) {
+  window.resolveLocalFileSystemURL('file:///storage/emulated/0/',
+    (fileSystem) => {
+      fileSystem.getDirectory('Download', {
+        create: true,
+        exclusive: false,
+      },
+      (directory) => {
+        fileEntry.moveTo(
+          directory,
+          fileEntry.name,
+          resolve,
+          errorCallback,
+        );
+      }, errorCallback);
+    }, errorCallback);
+}
+
+function writeFile(fileEntry, text, resolve, errorCallback) {
+  // Create a FileWriter object for our FileEntry (log.txt).
+  fileEntry.createWriter((fileWriter) => {
+    fileWriter.onwriteend = () => {
+      moveFile(fileEntry, resolve, errorCallback);
+    };
+
+    fileWriter.onerror = errorCallback;
+
+    // create a new Blob instead.
+    const dataObj = new Blob([text], { type: 'text/plain' });
+
+    fileWriter.write(dataObj);
+  });
+}
+
+export const downloadFileCordova = (filename, text, resolve, reject) => {
+  const errorCallback = (error) => { console.log(error); reject(error); };
+  window.requestFileSystem(window.LocalFileSystem.PERSISTENT, 0, (fs) => {
+    console.log(`file system open: ${fs.name}`);
+    fs.root.getFile(filename, { create: true, exclusive: false }, (fileEntry) => {
+      console.log(`fileEntry is file?${fileEntry.isFile.toString()}`);
+      writeFile(fileEntry, text, resolve, errorCallback);
+    }, errorCallback);
+  }, errorCallback);
+};
+
+const dummyFunc = () => {};
+export const downloadFile = (filename, text, resolve = dummyFunc, reject = dummyFunc) => {
+  console.log(window.cordova);
+  if (window.cordova) {
+    downloadFileCordova(filename, text, resolve, reject);
+  } else {
+    downloadFileText(filename, text, resolve, reject);
+  }
 };

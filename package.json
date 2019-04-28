@@ -11,6 +11,7 @@
     "@rematch/core": "^1.1.0",
     "cordova-android": "8.0.0",
     "cordova-browser": "^6.0.0",
+    "cordova-plugin-file": "6.0.1",
     "eslint-config-airbnb": "^17.1.0",
     "final-form": "^4.12.0",
     "immutability-helper": "^3.0.0",
@@ -36,6 +37,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "move": "rm -rf www/* && mv build/* www || move build/* www",
+    "deploy": "npm run build && npm run move && cordova run android",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -53,7 +55,8 @@
   },
   "cordova": {
     "plugins": {
-      "cordova-plugin-whitelist": {}
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-file": {}
     },
     "platforms": [
       "browser",

@@ -29,16 +29,24 @@ const { dispatch, getState } = store;
 
 const providers = { dispatch, getState };
 
-ReactDOM.render((
-  <Router>
-    <SnackbarProvider maxSnack={3}>
-      <StoreContext.Provider value={store}>
-        <ThemeProvider theme={theme}>
-          <ProppyProvider providers={providers}>
-            <App />
-          </ProppyProvider>
-        </ThemeProvider>
-      </StoreContext.Provider>
-    </SnackbarProvider>
-  </Router>
-), document.getElementById('root'));
+const startApp = () => {
+  ReactDOM.render((
+    <Router>
+      <SnackbarProvider maxSnack={3}>
+        <StoreContext.Provider value={store}>
+          <ThemeProvider theme={theme}>
+            <ProppyProvider providers={providers}>
+              <App />
+            </ProppyProvider>
+          </ThemeProvider>
+        </StoreContext.Provider>
+      </SnackbarProvider>
+    </Router>
+  ), document.getElementById('root'));
+};
+
+if (window.cordova) {
+  document.addEventListener('deviceready', startApp, false);
+} else {
+  startApp();
+}
