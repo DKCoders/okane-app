@@ -243,3 +243,15 @@ export const downloadFile = (filename, text, resolve = dummyFunc, reject = dummy
     downloadFileText(filename, text, resolve, reject);
   }
 };
+
+export const getQueryVariable = (key) => {
+  const query = window.location.search.substring(1);
+  const vars = query.split('&');
+  for (let i = 0; i < vars.length; i += 1) {
+    const pair = vars[i].split('=');
+    if (decodeURIComponent(pair[0]) === key) {
+      return decodeURIComponent(pair[1]);
+    }
+  }
+  return undefined;
+};

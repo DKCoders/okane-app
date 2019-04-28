@@ -59,9 +59,23 @@ const groupByCategory = (expenses, categories, sortDir) => compose(
 // 0: By date; 1: By category;
 const getGroupByFunc = sortIndex => (sortIndex === 0 ? groupByDate : groupByCategory);
 
-const useGroupBy = (expenses, categories, sortIndex, sortDir) => useMemo(
+export const useGroupBy = (expenses, categories, sortIndex, sortDir) => useMemo(
   () => getGroupByFunc(sortIndex)(expenses, categories, sortDir),
   [expenses, categories, sortIndex, sortDir],
 );
 
-export default useGroupBy;
+const groupIncomesByDate = (incomes, sortDir) => compose(
+  dateSorter('title', sortDir),
+  map(([date, income]) => ({
+    title: date,
+    items: income,
+    key: date,
+  })),
+  toPairs,
+  groupReduce('date'),
+)(incomes);
+
+export const useIncomesGroupBy = (incomes, sortDir) => useMemo(
+  () => groupIncomesByDate(incomes, sortDir),
+  [incomes, sortDir],
+);

@@ -5,6 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import CategoryTitle from '../../../../../components/CategoryTitle';
 import Currency from '../../../../../components/Currency';
 
+export const avatarRenderText = key => item => <Avatar>{typeof key === 'string' ? item[key] : key(item)}</Avatar>;
+
 export const avatarRenderCategoryColor = category => (
   <Avatar style={{ backgroundColor: category ? category.color : 'lightgray' }}>
     {!!category && category.name.substring(0, 2).toUpperCase()}
@@ -13,8 +15,8 @@ export const avatarRenderCategoryColor = category => (
 const avatarRenderColorMaker = categories => item => avatarRenderCategoryColor(
   categories[item.categoryId],
 );
-const avatarRenderText = item => <Avatar>{moment(item.date).format('DD')}</Avatar>;
-const dayTitle = date => (<Typography variant="h6" align="center">{moment(date).format('ddd DD')}</Typography>);
+const avatarRenderDateText = avatarRenderText(item => moment(item.date).format('DD'));
+export const dayTitle = date => (<Typography variant="h6" align="center">{moment(date).format('ddd DD')}</Typography>);
 const categoryTitle = title => <CategoryTitle category={title} />;
 const renderText = item => item.description;
 const renderAction = item => <Currency value={item.amount} />;
@@ -30,7 +32,7 @@ const useRenders = (sortIndex, categories) => useMemo(() => {
   }
   return {
     renderTitle: categoryTitle,
-    renderAvatar: avatarRenderText,
+    renderAvatar: avatarRenderDateText,
     renderText,
     renderAction,
   };

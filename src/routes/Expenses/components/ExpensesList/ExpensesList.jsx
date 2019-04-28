@@ -21,10 +21,12 @@ import { withTranslation } from '../../../../services/translation';
 import MonthPicker from '../../../../components/MonthPicker';
 import AppBar from '../../../../components/StyledAppBar';
 import ListBlock from '../../../../components/ListBlock';
-import useRenders from './hooks/useRenders';
+import useRenders, { avatarRenderText, dayTitle } from './hooks/useRenders';
 import useSorters from './hooks/useSorters';
-import useGroupBy from './hooks/useGroupBy';
+import { useGroupBy, useIncomesGroupBy } from './hooks/useGroupBy';
 import useFilters from './hooks/useFilters';
+
+const incomeAvatarRender = avatarRenderText(() => 'I');
 
 const monthPickerProps = {
   size: 'large',
@@ -50,21 +52,26 @@ const ExpensesList = ({ t, match, history }) => {
   const onMonthYearChange = useCallback(
     (newMonth, newYear) => setMonthYear({ month: newMonth, year: newYear }), [],
   );
-  // Tab state
-  const [tab, setTab] = useState(0);
   // Search state
   const [search, setSearch] = useDebounceState('', 300);
   // Redux state
   const mapState = useCallback(state => ({
     expenses: state.expenses.expenses,
+    incomes: state.incomes.incomes,
     categories: state.categories.categories,
     isExpensesFetched: state.expenses.fetched,
+    isIncomesFetched: state.incomes.fetched,
     isCategoriesFetched: state.categories.fetched,
+    tab: state.app.expenseListTab,
   }), []);
   const {
-    expenses, categories, isExpensesFetched, isCategoriesFetched,
+    expenses, incomes, categories, isExpensesFetched, isCategoriesFetched, isIncomesFetched, tab,
   } = useMappedState(mapState);
   const dispatch = useDispatch();
+  // set Tab Handler
+  const setTab = useCallback((value) => {
+    dispatch.app.setExpenseListTab(value);
+  }, []);
   // Filter state
   const {
     filters, openFilters, isFilterActive, filterRender,
@@ -84,9 +91,11 @@ const ExpensesList = ({ t, match, history }) => {
   useEffect(() => {
     if (!isCategoriesFetched) dispatch.categories.fetch();
     if (!isExpensesFetched) dispatch.expenses.fetch();
-  }, [isExpensesFetched, isCategoriesFetched]);
+    if (!isIncomesFetched) dispatch.incomes.fetch();
+  }, [isExpensesFetched, isCategoriesFetched, isIncomesFetched]);
   // Converting to array
   const expensesArray = useMemo(() => Object.values(expenses), [expenses]);
+  const incomesArray = useMemo(() => Object.values(incomes), [incomes]);
   // Date Filter
   const dateFiltered = useMemo(() => filter((expense) => {
     const date = moment(expense.date);
@@ -100,6 +109,12 @@ const ExpensesList = ({ t, match, history }) => {
   const {
     renderTitle, renderAvatar, renderText, renderAction,
   } = useRenders(sortIndex, categories);
+  // Filtering and Mapping incomes
+  const filteredIncomes = useMemo(
+    () => incomesArray.filter(filterByKey(search)),
+    [incomesArray, search],
+  );
+  const groupedIncomes = useIncomesGroupBy(filteredIncomes, sortDir);
   return (
     <>
       <Navbar
@@ -126,14 +141,26 @@ const ExpensesList = ({ t, match, history }) => {
       <AppBar position="static">
         <Tabs value={tab} onChange={(event, value) => setTab(value)} variant="fullWidth">
           <Tab icon={<ExpenseIcon />} label={t('Expenses')} />
-          <Tab disabled icon={<IncomeIcon />} label={t('Incomes')} />
+          <Tab icon={<IncomeIcon />} label={t('Incomes')} />
         </Tabs>
       </AppBar>
-      {grouped.map(({ title, items, key }) => (
+      {tab === 0 && grouped.map(({ title, items, key }) => (
         <ListBlock
           key={key}
           title={renderTitle(title)}
           renderAvatar={renderAvatar}
+          renderText={renderText}
+          renderAction={renderAction}
+          items={items}
+          keyProp="id"
+          onItemClick={onItemClick}
+        />
+      ))}
+      {tab === 1 && groupedIncomes.map(({ title, items, key }) => (
+        <ListBlock
+          key={key}
+          title={dayTitle(title)}
+          renderAvatar={incomeAvatarRender}
           renderText={renderText}
           renderAction={renderAction}
           items={items}

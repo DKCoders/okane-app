@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { useField, useForm } from 'react-final-form-hooks';
@@ -33,14 +33,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const rules = [
+const incomeRules = [
   { key: 'date', validators: ['required'] },
   { key: 'description', validators: ['required'] },
-  { key: 'categoryId', validators: ['required'] },
   { key: 'amount', validators: ['required', 'number', 'positive'] },
 ];
 
-const validate = makeValidator(rules);
+const rules = [
+  ...incomeRules,
+  { key: 'categoryId', validators: ['required'] },
+];
 
 const makeGetErrorAndHelperText = (t = str => str) => (field) => {
   const helperText = field.meta.touched && field.meta.error && t(field.meta.error);
@@ -62,11 +64,16 @@ const ExpenseInnerForm = ({ history, id, data }) => {
   const classes = useStyles();
   // Redux State
   const mapState = useCallback(state => ({
+    tab: state.app.expenseListTab,
     categories: state.categories.categories,
     categoriesFetched: state.categories.fetched,
   }), []);
-  const { categories, categoriesFetched } = useMappedState(mapState);
+  const { categories, categoriesFetched, tab } = useMappedState(mapState);
   const dispatch = useDispatch();
+  const type = tab === 0 ? 'expenses' : 'incomes';
+  const title = tab === 0 ? 'Expense' : 'Income';
+  // Validator
+  const validate = useMemo(() => makeValidator(tab === 0 ? rules : incomeRules), [tab]);
   // didMount
   useEffect(() => {
     if (!categoriesFetched) {
@@ -82,7 +89,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
     try {
       if (!id) {
       // New
-        const newItem = await dispatch.expenses.add({ item: castedValues });
+        const newItem = await dispatch[type].add({ item: castedValues });
         if (createAnother.value) {
           const anotherInitialValues = {
             ...newInitialValues,
@@ -95,7 +102,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
         return {};
       }
       // Edit
-      await dispatch.expenses.edit({ id, item: castedValues });
+      await dispatch[type].edit({ id, item: castedValues });
       history.replace(`/expenses/${id}`);
       return {};
     } catch (e) {
@@ -120,14 +127,14 @@ const ExpenseInnerForm = ({ history, id, data }) => {
   });
   const date = useField('date', form);
   const description = useField('description', form);
-  const categoryId = useField('categoryId', form);
+  const categoryId = tab === 0 && useField('categoryId', form);
   const amount = useField('amount', form);
   const getErrorAndHelperText = makeGetErrorAndHelperText(t);
   return (
     <form onSubmit={handleSubmit} noValidate>
       <Navbar
         left={<BackButton to={!id ? '/expenses' : `/expenses/${id}`} />}
-        title={t(!id ? 'New Expense' : 'Edit Expense')}
+        title={t(!id ? `New ${title}` : `Edit ${title}`)}
         right={(
           <IconButton color="inherit" disabled={pristine || submitting} type="submit">
             <DoneIcon />
@@ -147,6 +154,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
             fullWidth
           />
         </Grid>
+        {tab === 0 && (
         <Grid item className={classes.itemSpacing}>
           <TextField
             {...categoryId.input}
@@ -164,6 +172,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
             ))}
           </TextField>
         </Grid>
+        )}
         <Grid item className={classes.itemSpacing}>
           <TextField
             {...amount.input}

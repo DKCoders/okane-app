@@ -28,15 +28,21 @@ const ExpenseView = ({ history, match: { url, params: { id } } }) => {
   const classes = useStyles();
   // Redux State
   const mapState = useCallback(state => ({
+    tab: state.app.expenseListTab,
     categories: state.categories.categories,
     categoriesFetched: state.categories.fetched,
-    expense: state.expenses.expenses && state.expenses.expenses[id],
+    expense: state.app.expenseListTab === 0
+      ? state.expenses.expenses && state.expenses.expenses[id]
+      : state.incomes.incomes && state.incomes.incomes[id],
     expensesFetched: state.expenses.fetched,
+    incomesFetched: state.incomes.fetched,
   }), [id]);
   const {
-    categories, categoriesFetched, expense, expensesFetched,
+    categories, categoriesFetched, expense, expensesFetched, incomesFetched, tab,
   } = useMappedState(mapState);
   const dispatch = useDispatch();
+  const title = tab === 0 ? 'Expense' : 'Income';
+  const type = tab === 0 ? 'expenses' : 'incomes';
   // didMount
   useEffect(() => {
     if (!categoriesFetched) {
@@ -44,6 +50,9 @@ const ExpenseView = ({ history, match: { url, params: { id } } }) => {
     }
     if (!expensesFetched) {
       dispatch.expenses.fetch();
+    }
+    if (!incomesFetched) {
+      dispatch.incomes.fetch();
     }
   }, []);
   // Handlers
@@ -65,7 +74,7 @@ const ExpenseView = ({ history, match: { url, params: { id } } }) => {
       cancelText: t('No'),
     });
     if (confirm) {
-      dispatch.expenses.remove({
+      dispatch[type].remove({
         id: expense.id,
         resolve: onRemoveSuccess,
         reject: onFetchError,
@@ -76,13 +85,15 @@ const ExpenseView = ({ history, match: { url, params: { id } } }) => {
     <>
       <Navbar
         left={<BackButton to="/expenses" />}
-        title={t('Expense')}
+        title={t(title)}
         right={<EraseEditButtons onEditClick={onEdit} onEraseClick={onRemove} />}
       />
       <LeftAndRight
         className={classes.spacing}
-        left={(
+        left={tab === 0 ? (
           <CategoryTitle category={categories[expense.categoryId]} justify="flex-start" />
+        ) : (
+          <CategoryTitle category={{ name: t('Income') }} justify="flex-start" />
         )}
         right={moment(expense.date).format('ddd DD/MM/YYYY')}
       />

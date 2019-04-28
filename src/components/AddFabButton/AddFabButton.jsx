@@ -15,9 +15,12 @@ const useStyles = makeStyles(theme => ({
 const AddFabButton = ({ onClick }) => {
   const classes = useStyles();
   return (
-    <Fab color="secondary" className={classes.fab} onClick={onClick}>
-      <AddIcon />
-    </Fab>
+    <>
+      <div style={{ height: 60 }} />
+      <Fab color="secondary" className={classes.fab} onClick={onClick}>
+        <AddIcon />
+      </Fab>
+    </>
   );
 };
 
