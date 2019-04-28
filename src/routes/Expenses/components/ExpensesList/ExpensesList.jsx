@@ -101,7 +101,7 @@ const ExpensesList = ({ t, match, history }) => {
     const date = moment(expense.date);
     return date.month() === month && date.year() === year;
   })(expensesArray), [expensesArray, month, year]);
-  const dateIncomeFitlered = useMemo(() => filter((income) => {
+  const dateIncomeFiltered = useMemo(() => filter((income) => {
     const date = moment(income.date);
     return date.month() === month && date.year() === year;
   })(incomesArray), [incomesArray, month, year]);
@@ -115,8 +115,8 @@ const ExpensesList = ({ t, match, history }) => {
   } = useRenders(sortIndex, categories);
   // Filtering and Mapping incomes
   const filteredIncomes = useMemo(
-    () => dateIncomeFitlered.filter(filterByKey(search)),
-    [dateIncomeFitlered, search],
+    () => dateIncomeFiltered.filter(filterByKey(search)),
+    [dateIncomeFiltered, search],
   );
   const groupedIncomes = useIncomesGroupBy(filteredIncomes, sortDir);
   return (
@@ -174,7 +174,11 @@ const ExpensesList = ({ t, match, history }) => {
           footer={renderFooter(t('Total'), items)}
         />
       ))}
-      <Balance onAddClick={onAddClick} />
+      <Balance
+        expenses={dateFiltered.reduce((acum, item) => acum + item.amount, 0)}
+        incomes={dateIncomeFiltered.reduce((acum, item) => acum + item.amount, 0)}
+        onAddClick={onAddClick}
+      />
     </>
   );
 };

@@ -5,7 +5,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import AddFabButton from '../../../../../components/AddFabButton';
-
+import Currency from '../../../../../components/Currency';
+import { useTranslation } from '../../../../../services/translation';
 
 const useStyles = makeStyles({
   appBar: {
@@ -18,7 +19,8 @@ const useStyles = makeStyles({
   },
 });
 
-const Balance = ({ onAddClick }) => {
+const Balance = ({ onAddClick, expenses, incomes }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
   return (
     <>
@@ -26,11 +28,17 @@ const Balance = ({ onAddClick }) => {
       <AppBar position="fixed" color="primary" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <div>
-            <Typography>Ingresos</Typography>
+            <Typography color="inherit">
+              {t('Expenses')}
+            </Typography>
+            <Currency color="inherit" value={expenses} />
           </div>
           <AddFabButton absolute onClick={onAddClick} />
           <div>
-            <Typography>Egresos</Typography>
+            <Typography color="inherit">
+              {t('Incomes')}
+            </Typography>
+            <Currency color="inherit" value={incomes} />
           </div>
         </Toolbar>
       </AppBar>
@@ -40,6 +48,8 @@ const Balance = ({ onAddClick }) => {
 
 Balance.propTypes = {
   onAddClick: PropTypes.func.isRequired,
+  expenses: PropTypes.number.isRequired,
+  incomes: PropTypes.number.isRequired,
 };
 
 Balance.defaultProps = {};
