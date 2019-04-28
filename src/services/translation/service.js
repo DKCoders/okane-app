@@ -4,8 +4,15 @@ import moment from 'moment';
 import es from './files/es';
 
 let activeFile = null;
-let activeKey = null;
+let activeKey = 'en';
 class TranslateService {
+  static initialize() {
+    const language = localStorage.getItem('language');
+    if (language) {
+      TranslateService.setLanguage(language);
+    }
+  }
+
   static t(str) {
     if (!activeFile) {
       return str;
@@ -25,6 +32,7 @@ class TranslateService {
       activeFile = null;
     }
     moment.locale(key || 'en');
+    localStorage.setItem('language', key);
   }
 
   static getLanguage() {

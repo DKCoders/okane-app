@@ -21,6 +21,10 @@ const SettingsList = () => {
           <ListItemText primary={t('Data management')} />
         </ListItem>
         <Divider />
+        <ListItem button component={Link} to="/settings/languages">
+          <ListItemText primary={t('Languages')} />
+        </ListItem>
+        <Divider />
       </List>
     </>
   );

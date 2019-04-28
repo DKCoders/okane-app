@@ -22,7 +22,7 @@ const theme = createMuiTheme({
 
 install();
 
-TranslationService.setLanguage('es');
+TranslationService.initialize();
 
 const store = init({ models });
 const { dispatch, getState } = store;
