@@ -15,12 +15,12 @@ import useDebounceState from '../../../../hooks/useDebounceState';
 import { filterByKey } from '../../../../utils/helpers';
 import Navbar from '../../../../components/Navbar';
 import MenuButton from '../../../../components/MenuButton';
-import AddFabButton from '../../../../components/AddFabButton';
 import FilterSortSearchButtons from '../../../../components/FilterSortSearchButtons';
 import { withTranslation } from '../../../../services/translation';
 import MonthPicker from '../../../../components/MonthPicker';
 import AppBar from '../../../../components/StyledAppBar';
 import ListBlock from '../../../../components/ListBlock';
+import Balance from './components/Balance';
 import useRenders, { avatarRenderText, dayTitle } from './hooks/useRenders';
 import useSorters from './hooks/useSorters';
 import { useGroupBy, useIncomesGroupBy } from './hooks/useGroupBy';
@@ -101,18 +101,22 @@ const ExpensesList = ({ t, match, history }) => {
     const date = moment(expense.date);
     return date.month() === month && date.year() === year;
   })(expensesArray), [expensesArray, month, year]);
+  const dateIncomeFitlered = useMemo(() => filter((income) => {
+    const date = moment(income.date);
+    return date.month() === month && date.year() === year;
+  })(incomesArray), [incomesArray, month, year]);
   // Filtering and Mapping expenses
   const filtered = useMemo(() => applyFilters(dateFiltered, filters), [dateFiltered, filters]);
   const textFiltered = useMemo(() => filtered.filter(filterByKey(search)), [filtered, search]);
   const grouped = useGroupBy(textFiltered, categories, sortIndex, sortDir);
   // Renders
   const {
-    renderTitle, renderAvatar, renderText, renderAction,
+    renderTitle, renderAvatar, renderText, renderAction, renderFooter,
   } = useRenders(sortIndex, categories);
   // Filtering and Mapping incomes
   const filteredIncomes = useMemo(
-    () => incomesArray.filter(filterByKey(search)),
-    [incomesArray, search],
+    () => dateIncomeFitlered.filter(filterByKey(search)),
+    [dateIncomeFitlered, search],
   );
   const groupedIncomes = useIncomesGroupBy(filteredIncomes, sortDir);
   return (
@@ -154,6 +158,7 @@ const ExpensesList = ({ t, match, history }) => {
           items={items}
           keyProp="id"
           onItemClick={onItemClick}
+          footer={renderFooter(t('Total'), items)}
         />
       ))}
       {tab === 1 && groupedIncomes.map(({ title, items, key }) => (
@@ -166,9 +171,10 @@ const ExpensesList = ({ t, match, history }) => {
           items={items}
           keyProp="id"
           onItemClick={onItemClick}
+          footer={renderFooter(t('Total'), items)}
         />
       ))}
-      <AddFabButton onClick={onAddClick} />
+      <Balance onAddClick={onAddClick} />
     </>
   );
 };

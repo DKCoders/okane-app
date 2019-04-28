@@ -64,6 +64,7 @@ export default {
   Empty: 'Vacio',
   Description: 'Descripcion',
   Amount: 'Monto',
+  Total: 'Total',
   'Nothing found': 'Nada encontrado',
   'Data management': 'Manejo de datos',
   'Download Backup': 'Descargar Respaldo',

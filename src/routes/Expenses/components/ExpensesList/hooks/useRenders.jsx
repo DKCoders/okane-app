@@ -20,6 +20,12 @@ export const dayTitle = date => (<Typography variant="h6" align="center">{moment
 const categoryTitle = title => <CategoryTitle category={title} />;
 const renderText = item => item.description;
 const renderAction = item => <Currency value={item.amount} />;
+const renderFooter = (_primary, items) => {
+  const primary = <Typography style={{ textAlign: 'right', marginRight: 5, fontWeight: 'bold' }}>{_primary}</Typography>;
+  const total = items.reduce((acum, item) => acum + item.amount, 0);
+  const action = <Currency value={total} style={{ fontWeight: 'bold' }} />;
+  return { primary, action };
+};
 
 const useRenders = (sortIndex, categories) => useMemo(() => {
   if (sortIndex === 0) {
@@ -28,6 +34,7 @@ const useRenders = (sortIndex, categories) => useMemo(() => {
       renderAvatar: avatarRenderColorMaker(categories),
       renderText,
       renderAction,
+      renderFooter,
     };
   }
   return {
@@ -35,6 +42,7 @@ const useRenders = (sortIndex, categories) => useMemo(() => {
     renderAvatar: avatarRenderDateText,
     renderText,
     renderAction,
+    renderFooter,
   };
 }, [sortIndex, categories]);
 

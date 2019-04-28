@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 });
 
 const ListBlock = ({
-  title, renderAvatar, renderText, renderAction, items, keyProp, onItemClick,
+  title, footer, renderAvatar, renderText, renderAction, items, keyProp, onItemClick,
 }) => {
   const classes = useStyles();
   return (
@@ -40,6 +40,23 @@ const ListBlock = ({
             )}
           </ListItem>
         ))}
+        {!!footer && (
+          <ListItem>
+            {!!footer.avatar
+              && footer.avatar
+            }
+            <ListItemText
+              primaryTypographyProps={{ noWrap: true }}
+              primary={footer.primary}
+              secondary={footer.secondary}
+            />
+            {!!footer.action && (
+              <ListItemSecondaryAction>
+                {footer.action}
+              </ListItemSecondaryAction>
+            )}
+          </ListItem>
+        )}
       </List>
     </div>
   );
@@ -53,6 +70,12 @@ ListBlock.propTypes = {
   onItemClick: PropTypes.func,
   items: PropTypes.arrayOf(PropTypes.shape()),
   keyProp: PropTypes.string,
+  footer: PropTypes.shape({
+    avatar: PropTypes.node,
+    primary: PropTypes.node,
+    secondary: PropTypes.node,
+    action: PropTypes.node,
+  }),
 };
 
 const dummyFunc = () => {};
@@ -63,6 +86,7 @@ ListBlock.defaultProps = {
   onItemClick: dummyFunc,
   items: [],
   keyProp: 'id',
+  footer: null,
 };
 
 export default ListBlock;
