@@ -1,3 +1,3 @@
 import generator from './generator';
 
-export default generator('expenses');
+export default generator('incomes');

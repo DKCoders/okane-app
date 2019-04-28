@@ -37,10 +37,10 @@ const ExpenseView = ({ history, match: { url, params: { id } } }) => {
   // didMount
   useEffect(() => {
     if (!categoriesFetched) {
-      dispatch.categories.fetchCategories();
+      dispatch.categories.fetch();
     }
     if (!expensesFetched) {
-      dispatch.expenses.fetchExpenses();
+      dispatch.expenses.fetch();
     }
   }, []);
   // Handlers

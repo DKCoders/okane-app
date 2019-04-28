@@ -70,7 +70,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
   // didMount
   useEffect(() => {
     if (!categoriesFetched) {
-      dispatch.categories.fetchCategories();
+      dispatch.categories.fetch();
     }
   }, []);
   // Create another state
@@ -82,7 +82,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
     try {
       if (!id) {
       // New
-        const newItem = await dispatch.expenses.addExpense(castedValues);
+        const newItem = await dispatch.expenses.add(castedValues);
         if (createAnother.value) {
           const anotherInitialValues = {
             ...newInitialValues,
@@ -95,7 +95,7 @@ const ExpenseInnerForm = ({ history, id, data }) => {
         return {};
       }
       // Edit
-      await dispatch.expenses.editExpense({ id, item: castedValues });
+      await dispatch.expenses.edit({ id, item: castedValues });
       history.replace(`/expenses/${id}`);
       return {};
     } catch (e) {

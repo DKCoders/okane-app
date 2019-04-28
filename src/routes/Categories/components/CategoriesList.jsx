@@ -51,7 +51,7 @@ const CategoriesList = () => {
   }, []);
   // Did mount
   const fetchData = useCallback(() => {
-    dispatch.categories.fetchCategories({ reject: onFetchError });
+    dispatch.categories.fetch({ reject: onFetchError });
   }, []);
   useEffect(() => {
     fetchData();
@@ -71,7 +71,7 @@ const CategoriesList = () => {
     });
     if (added) {
       const resolve = () => setItem(null);
-      dispatch.categories.addCategory({ item: added, resolve, reject: onFetchError });
+      dispatch.categories.add({ item: added, resolve, reject: onFetchError });
     }
   }, [item]);
   const onEdit = useCallback(async () => {
@@ -79,7 +79,7 @@ const CategoriesList = () => {
     const edited = await categoryFormDialogService.show({ item });
     if (edited) {
       const resolve = () => setItem(null);
-      dispatch.categories.editCategory({
+      dispatch.categories.edit({
         item: edited, resolve, reject: onFetchError, id: item.id,
       });
     }
@@ -93,7 +93,7 @@ const CategoriesList = () => {
       cancelText: t('No'),
     });
     if (confirm) {
-      dispatch.categories.removeCategory({ id: item.id, reject: onFetchError });
+      dispatch.categories.remove({ id: item.id, reject: onFetchError });
     }
     setItem(null);
   }, [item]);

@@ -1,13 +1,3 @@
-import { regularSetReducer, regularSetByIdReducer, omitReducer } from '../../utils/reducerHelpers';
+import reducersGenerator from '../generators/reducersGenerator';
 
-export const initialState = {
-  expenses: {},
-  fetched: false,
-};
-
-export const reducers = {
-  setExpenses: regularSetReducer('expenses'),
-  setExpenseById: regularSetByIdReducer('expenses'),
-  removeExpenseById: omitReducer('expenses'),
-  setFetched: regularSetReducer('fetched'),
-};
+export const { initialState, reducers } = reducersGenerator('expenses');

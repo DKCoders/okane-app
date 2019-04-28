@@ -82,8 +82,8 @@ const ExpensesList = ({ t, match, history }) => {
   }, [match.url]);
   // onMount
   useEffect(() => {
-    if (!isCategoriesFetched) dispatch.categories.fetchCategories();
-    if (!isExpensesFetched) dispatch.expenses.fetchExpenses();
+    if (!isCategoriesFetched) dispatch.categories.fetch();
+    if (!isExpensesFetched) dispatch.expenses.fetch();
   }, [isExpensesFetched, isCategoriesFetched]);
   // Converting to array
   const expensesArray = useMemo(() => Object.values(expenses), [expenses]);
